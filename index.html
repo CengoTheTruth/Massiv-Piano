@@ -1,163 +1,320 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#6d28d9">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Massiv Piano">
-<link rel="manifest" href="manifest.webmanifest">
-<title>Massiv Piano</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piano & Kater</title>
+
 <style>
-:root{--purple:#6d28d9;--soft:#f3e8ff;--bg:#faf7ff;--text:#211a2d;--muted:#756a82;--line:#e7dff0}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
-main{max-width:760px;margin:auto;padding:18px 14px 40px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-h1{font-size:25px;margin:0}.sub{color:var(--muted);font-size:14px;margin-top:3px}
-.card{background:white;border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0}
-h2{font-size:18px;margin:0 0 12px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-button{border:0;border-radius:13px;padding:12px 15px;font-size:15px;font-weight:650;min-height:44px;cursor:pointer}
-.primary{background:var(--purple);color:white}.secondary{background:var(--soft);color:var(--text)}.outline{background:white;border:1px solid var(--line);color:var(--text)}
-button:disabled{opacity:.45}
-.piano{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
-.key{height:130px;background:#fff;border:1px solid #d9d1df;border-radius:0 0 12px 12px;box-shadow:0 3px 5px #00000012;display:flex;align-items:flex-end;justify-content:center;padding-bottom:13px;color:#41364a}
-.key:active{background:var(--soft);transform:translateY(3px)}
-input,textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--text)}
-textarea{resize:vertical}.pill{border-radius:999px;background:#eee7f7;padding:7px 10px;font-size:13px}
-.message{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.avatar{width:44px;height:44px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:24px;flex:none}
-.msgtext{font-size:14px;color:var(--muted);white-space:pre-wrap}.small{font-size:12px;color:var(--muted)}
-.notice{background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;padding:12px;font-size:13px}
-@media(max-width:520px){.key{height:105px;font-size:12px}.piano{gap:3px}main{padding:14px 10px 32px}}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #17131f;
+  color: white;
+  text-align: center;
+}
+
+header {
+  padding: 22px 10px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.subtitle {
+  color: #c8bfd4;
+  margin-top: 8px;
+}
+
+.cat {
+  font-size: 80px;
+  margin: 10px;
+}
+
+.message {
+  margin: 15px auto;
+  padding: 14px;
+  max-width: 500px;
+  background: #282132;
+  border-radius: 16px;
+  min-height: 25px;
+}
+
+.piano {
+  display: flex;
+  justify-content: center;
+  margin: 25px auto;
+  max-width: 600px;
+  height: 190px;
+}
+
+.key {
+  width: 45px;
+  height: 180px;
+  background: white;
+  color: black;
+  border: 1px solid #222;
+  border-radius: 0 0 7px 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 12px;
+  font-weight: bold;
+}
+
+.key:active {
+  background: #d8d8d8;
+  transform: translateY(3px);
+}
+
+.controls {
+  margin: 20px;
+}
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 13px 18px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #8e68c7;
+  color: white;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+.recording {
+  background: #b53b5c;
+}
+
+.log {
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: left;
+  padding: 0 15px 30px;
+}
+
+.note {
+  padding: 10px;
+  border-bottom: 1px solid #3b3247;
+}
 </style>
 </head>
+
 <body>
-<main>
+
 <header>
-<div><h1>🐈 Massiv Piano</h1><div class="sub">Euer gemeinsamer musikalischer Chat ❤️</div></div>
-<div class="pill" id="connection">Offline-Modus</div>
+  <h1>🎹 Piano & 🐱 Kater</h1>
+  <div class="subtitle">Musik zwischen Mensch und KI-Kater</div>
 </header>
 
-<div class="card">
-<h2>🎹 Dein Piano</h2>
-<div class="sub" id="status">Spiele eine Melodie für Massiv.</div>
-<div class="piano" id="piano" style="margin-top:12px"></div>
-<div class="row" style="margin-top:14px">
-<button class="primary" id="rec">⏺ Aufnahme</button>
-<button class="outline" id="stop" disabled>⏹ Stop</button>
-<button class="secondary" id="clear">↺ Neu</button>
-</div>
-<div class="row" style="margin-top:10px"><span class="pill" id="noteCount">0 Töne</span><span class="pill" id="duration">0,0 s</span></div>
+<div class="cat">🐱</div>
+
+<div class="message" id="message">
+  Miau! Spiel mir eine Melodie. 🎵
 </div>
 
-<div class="card">
-<h2>💌 Nachricht an Massiv</h2>
-<textarea id="text" rows="3" placeholder="Schreib Massiv etwas zu deiner Melodie …"></textarea>
-<div class="row" style="margin-top:10px">
-<button class="secondary" id="voice">🎙️ Sprachbotschaft</button>
-<button class="primary" id="send" disabled>💌 An Massiv senden</button>
-</div>
-<div class="small" id="voiceStatus" style="margin-top:8px">Keine Sprachaufnahme.</div>
+<div class="piano">
+
+  <button class="key" data-note="261.63">C</button>
+  <button class="key" data-note="293.66">D</button>
+  <button class="key" data-note="329.63">E</button>
+  <button class="key" data-note="349.23">F</button>
+  <button class="key" data-note="392.00">G</button>
+  <button class="key" data-note="440.00">A</button>
+  <button class="key" data-note="493.88">H</button>
+  <button class="key" data-note="523.25">C</button>
+
 </div>
 
-<div class="card">
-<h2>🐾 Massivs Nachrichten</h2>
-<div id="messages"><div class="small">Noch keine Nachrichten.</div></div>
+<div class="controls">
+
+  <button id="playCat">
+    🐱 Kater antwortet
+  </button>
+
+  <button id="record">
+    🎙️ Aufnahme starten
+  </button>
+
+  <button id="stop" disabled>
+    ⏹️ Aufnahme stoppen
+  </button>
+
 </div>
 
-<div class="card">
-<h2>🐱 Massiv antwortet</h2>
-<div class="sub">Im fertigen Online-Modus kann Massiv hier von seinem zweiten Gerät aus Melodien und Miau-Sprachnachrichten schicken.</div>
-<div class="row" style="margin-top:12px">
-<button class="secondary" id="demoReply">🐾 Beispielantwort</button>
-<button class="outline" id="playLast">▶️ Letzte Melodie</button>
+<div class="log" id="log">
+  <div class="note">🐱 Kater: „Ich höre dir zu...“</div>
 </div>
-</div>
-
-<div class="card">
-<h2>🔐 Euer privater Raum</h2>
-<div class="row">
-<input id="room" placeholder="Raumcode, z. B. MASSIV123" autocomplete="off">
-<button class="primary" id="saveRoom">Raum öffnen</button>
-</div>
-<div class="small" style="margin-top:8px">Für die echte Zwei-Geräte-Synchronisierung wird dieser Raum später mit deinem Online-Backend verbunden.</div>
-</div>
-
-<div class="notice">Diese Version funktioniert bereits als Web-App im Browser. Mikrofonaufnahmen und Nachrichten werden zunächst auf diesem Gerät gehalten. Die Online-Synchronisierung wird nach dem Eintragen deines Backend-Projekts aktiviert.</div>
-</main>
 
 <script>
-const notes=[["C4",261.63],["D4",293.66],["E4",329.63],["F4",349.23],["G4",392],["A4",440],["B4",493.88],["C5",523.25]];
-const $=id=>document.getElementById(id);
-let ctx=null, recording=false, melody=[], started=0, voiceBlob=null, voiceUrl=null, lastMelody=[];
-let mediaRecorder=null, voiceChunks=[];
 
-function tone(freq,d=.38){
-  try{
-    ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
-    const o=ctx.createOscillator(),g=ctx.createGain();
-    o.type="sine";o.frequency.value=freq;
-    g.gain.setValueAtTime(.0001,ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(.24,ctx.currentTime+.015);
-    g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+d);
-    o.connect(g).connect(ctx.destination);o.start();o.stop(ctx.currentTime+d+.03);
-  }catch(e){}
+let audioContext;
+let melody = [];
+
+function playNote(frequency, duration = 0.45) {
+
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+
+  oscillator.frequency.value = frequency;
+  oscillator.type = "sine";
+
+  gain.gain.setValueAtTime(0.001, audioContext.currentTime);
+  gain.gain.exponentialRampToValueAtTime(
+    0.35,
+    audioContext.currentTime + 0.02
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    audioContext.currentTime + duration
+  );
+
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + duration);
 }
-function playMelody(m){
-  if(!m?.length)return;
-  m.forEach((n,i)=>setTimeout(()=>tone(n.f,.36),i*390));
-}
-notes.forEach(([name,f])=>{
- const b=document.createElement("button");b.className="key";b.type="button";b.textContent=name;
- b.addEventListener("pointerdown",()=>{tone(f);if(recording){melody.push({n:name,f,t:Date.now()-started});update();}});
- $("piano").appendChild(b);
+
+document.querySelectorAll(".key").forEach(key => {
+
+  key.addEventListener("click", () => {
+
+    const frequency = Number(key.dataset.note);
+
+    playNote(frequency);
+
+    melody.push(frequency);
+
+    document.getElementById("message").textContent =
+      "🐱 Miau! Ich habe deine Note gehört!";
+
+  });
+
 });
-function update(){
- $("noteCount").textContent=melody.length+" Töne";
- $("duration").textContent=((melody.at(-1)?.t||0)/1000).toFixed(1).replace(".",",")+" s";
- $("send").disabled=melody.length===0;
-}
-function load(){try{return JSON.parse(localStorage.getItem("massiv_messages")||"[]")}catch{return[]}}
-function save(a){localStorage.setItem("massiv_messages",JSON.stringify(a))}
-function render(){
- const a=load(), box=$("messages");box.innerHTML="";
- if(!a.length){box.innerHTML='<div class="small">Noch keine Nachrichten.</div>';return}
- a.slice().reverse().forEach(m=>{
-  const d=document.createElement("div");d.className="message";
-  d.innerHTML='<div class="avatar">'+(m.from==="massiv"?"🐈":"❤️")+'</div><div><strong>'+(m.from==="massiv"?"Massiv":"Du")+'</strong><div class="msgtext"></div><div class="small">'+(m.melody?.length?("🎵 "+m.melody.length+" Töne"):"")+(m.voice?" · 🎙️ Sprachbotschaft":"")+'</div></div>';
-  d.querySelector(".msgtext").textContent=m.text||"Melodie für dich ❤️";
-  if(m.melody?.length){const p=document.createElement("button");p.className="outline";p.style.marginTop="7px";p.textContent="▶️ Melodie";p.onclick=()=>playMelody(m.melody);d.querySelector("div:nth-child(2)").appendChild(p)}
-  if(m.voiceUrl){const au=document.createElement("audio");au.controls=true;au.src=m.voiceUrl;au.style.width="100%";au.style.marginTop="7px";d.querySelector("div:nth-child(2)").appendChild(au)}
-  box.appendChild(d);
- });
-}
-$("rec").onclick=()=>{melody=[];recording=true;started=Date.now();$("rec").disabled=true;$("stop").disabled=false;$("status").textContent="Ich höre zu … Spiel deine Melodie für Massiv ❤️";update()};
-$("stop").onclick=()=>{recording=false;$("rec").disabled=false;$("stop").disabled=true;$("status").textContent=melody.length?"Melodie fertig. Du kannst sie senden.":"Keine Töne aufgenommen.";lastMelody=melody.slice();update()};
-$("clear").onclick=()=>{melody=[];recording=false;$("rec").disabled=false;$("stop").disabled=true;$("status").textContent="Spiele eine neue Melodie für Massiv.";update()};
-$("voice").onclick=async()=>{
- if(mediaRecorder&&mediaRecorder.state==="recording"){mediaRecorder.stop();return}
- if(!navigator.mediaDevices?.getUserMedia){$("voiceStatus").textContent="Mikrofon wird von diesem Browser nicht unterstützt.";return}
- try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  voiceChunks=[];mediaRecorder=new MediaRecorder(stream);
-  mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};
-  mediaRecorder.onstop=()=>{voiceBlob=new Blob(voiceChunks,{type:"audio/mp4"});if(voiceUrl)URL.revokeObjectURL(voiceUrl);voiceUrl=URL.createObjectURL(voiceBlob);$("voiceStatus").textContent="🎙️ Sprachbotschaft aufgenommen. Sie wird beim Senden angehängt.";stream.getTracks().forEach(t=>t.stop());$("voice").textContent="🎙️ Neu aufnehmen";$("send").disabled=!melody.length};
-  mediaRecorder.start();$("voice").textContent="⏹️ Aufnahme stoppen";$("voiceStatus").textContent="Ich höre zu … Sag deine Botschaft an Massiv.";
- }catch(e){$("voiceStatus").textContent="Mikrofonzugriff wurde nicht erlaubt."}
-};
-$("send").onclick=()=>{
- const a=load();a.push({from:"you",text:$("text").value||"Eine Melodie für dich, Massiv ❤️",melody:melody.slice(),voice:!!voiceBlob,voiceUrl:voiceUrl||null,createdAt:Date.now()});save(a);
- lastMelody=melody.slice();melody=[];voiceBlob=null;voiceUrl=null;$("text").value="";$("voiceStatus").textContent="Keine Sprachaufnahme.";$("status").textContent="Gesendet! 💌";update();render();
-};
-$("demoReply").onclick=()=>{
- const m=[["G4",392],["A4",440],["C5",523.25],["A4",440],["G4",392]].map(x=>({n:x[0],f:x[1]}));
- const a=load();a.push({from:"massiv",text:"Miau! Ich habe deine Melodie gehört. ❤️ Miau-miau!",melody:m,voice:false,createdAt:Date.now()});save(a);lastMelody=m;render();
-};
-$("playLast").onclick=()=>playMelody(lastMelody);
-$("saveRoom").onclick=()=>{const r=$("room").value.trim();if(r){localStorage.setItem("massiv_room",r);$("connection").textContent="Raum: "+r;$("status").textContent="Raum "+r+" ist ausgewählt. 🐾"}};
-const r=localStorage.getItem("massiv_room");if(r){$("room").value=r;$("connection").textContent="Raum: "+r}
-render();
-if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}
+
+document.getElementById("playCat").addEventListener("click", () => {
+
+  const response = [
+    392.00,
+    440.00,
+    523.25,
+    440.00,
+    392.00,
+    329.63
+  ];
+
+  document.getElementById("message").textContent =
+    "🐱 Dein Kater antwortet musikalisch...";
+
+  response.forEach((note, index) => {
+
+    setTimeout(() => {
+      playNote(note, 0.5);
+    }, index * 500);
+
+  });
+
+  const log = document.getElementById("log");
+
+  const item = document.createElement("div");
+
+  item.className = "note";
+  item.textContent =
+    "🐱 Kater: „Miau... das ist meine Antwort auf deine Melodie.“";
+
+  log.appendChild(item);
+
+});
+
+let recorder;
+let audioChunks = [];
+
+document.getElementById("record").addEventListener("click", async () => {
+
+  try {
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    });
+
+    recorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    recorder.ondataavailable = event => {
+      audioChunks.push(event.data);
+    };
+
+    recorder.onstop = () => {
+
+      const blob = new Blob(audioChunks, {
+        type: "audio/webm"
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.src = url;
+
+      const log = document.getElementById("log");
+
+      const item = document.createElement("div");
+      item.className = "note";
+
+      item.innerHTML = "🎙️ Deine Sprachaufnahme:<br>";
+      item.appendChild(audio);
+
+      log.appendChild(item);
+
+      stream.getTracks().forEach(track => track.stop());
+
+    };
+
+    recorder.start();
+
+    document.getElementById("record").disabled = true;
+    document.getElementById("stop").disabled = false;
+
+    document.getElementById("message").textContent =
+      "🎙️ Ich höre zu...";
+
+  } catch (error) {
+
+    document.getElementById("message").textContent =
+      "⚠️ Mikrofon konnte nicht gestartet werden.";
+
+  }
+
+});
+
+document.getElementById("stop").addEventListener("click", () => {
+
+  if (recorder && recorder.state !== "inactive") {
+    recorder.stop();
+  }
+
+  document.getElementById("record").disabled = false;
+  document.getElementById("stop").disabled = true;
+
+  document.getElementById("message").textContent =
+    "🐱 Dein Kater hat deine Aufnahme bekommen!";
+
+});
+
 </script>
+
 </body>
 </html>
