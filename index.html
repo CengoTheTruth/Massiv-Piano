@@ -3,192 +3,346 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Piano & Kater</title>
+<title>Massiv Piano</title>
 
 <style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #17131f;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #392b48 0%, #17131d 55%, #0d0b11 100%);
   color: white;
+  font-family: Arial, sans-serif;
   text-align: center;
 }
 
-header {
-  padding: 22px 10px;
+.app {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px 12px 40px;
 }
 
 h1 {
-  margin: 0;
-  font-size: 28px;
+  margin: 5px 0;
+  font-size: 30px;
 }
 
 .subtitle {
-  color: #c8bfd4;
-  margin-top: 8px;
+  color: #c9bfd2;
+  margin-bottom: 18px;
 }
 
 .cat {
-  font-size: 80px;
-  margin: 10px;
+  font-size: 75px;
+  margin: 5px;
 }
 
 .message {
-  margin: 15px auto;
-  padding: 14px;
-  max-width: 500px;
-  background: #282132;
-  border-radius: 16px;
-  min-height: 25px;
+  max-width: 650px;
+  margin: 12px auto 22px;
+  padding: 15px 18px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* PIANO */
+
+.piano-area {
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 0 20px;
 }
 
 .piano {
-  display: flex;
-  justify-content: center;
-  margin: 25px auto;
-  max-width: 600px;
-  height: 190px;
+  position: relative;
+  width: 620px;
+  height: 230px;
+  margin: auto;
+  user-select: none;
+  touch-action: manipulation;
 }
 
-.key {
-  width: 45px;
-  height: 180px;
-  background: white;
-  color: black;
-  border: 1px solid #222;
-  border-radius: 0 0 7px 7px;
-  cursor: pointer;
+.white-keys {
+  display: flex;
+  height: 230px;
+}
+
+.white {
+  position: relative;
+  width: 77px;
+  height: 230px;
+  background: linear-gradient(to bottom, #ffffff, #e8e8e8);
+  border: 1px solid #aaa;
+  border-radius: 0 0 9px 9px;
+  color: #333;
+  font-size: 15px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 12px;
-  font-weight: bold;
+  padding-bottom: 16px;
+  cursor: pointer;
+  box-shadow: inset 0 -7px 0 rgba(0,0,0,0.08);
 }
 
-.key:active {
-  background: #d8d8d8;
+.white:active,
+.white.active {
+  background: #d5d5d5;
   transform: translateY(3px);
 }
 
-.controls {
-  margin: 20px;
+.black {
+  position: absolute;
+  top: 0;
+  width: 48px;
+  height: 145px;
+  background: linear-gradient(to bottom, #333, #050505);
+  border: 1px solid #000;
+  border-radius: 0 0 7px 7px;
+  z-index: 5;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 6px 9px rgba(0,0,0,0.45);
 }
 
-button {
-  border: none;
+.black:active,
+.black.active {
+  background: #555;
+  transform: translateY(3px);
+}
+
+.black1 { left: 53px; }
+.black2 { left: 130px; }
+.black3 { left: 284px; }
+.black4 { left: 361px; }
+.black5 { left: 438px; }
+
+.controls {
+  margin: 18px auto;
+  max-width: 650px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+button.control {
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 0;
   border-radius: 14px;
-  padding: 13px 18px;
-  margin: 5px;
+  background: #8964b7;
+  color: white;
   font-size: 16px;
   cursor: pointer;
-  background: #8e68c7;
-  color: white;
 }
 
-button:active {
+button.control:active {
   transform: scale(.97);
 }
 
-.recording {
-  background: #b53b5c;
+button.record {
+  background: #a93658;
+}
+
+button.stop {
+  background: #555;
+}
+
+button:disabled {
+  opacity: .45;
+}
+
+.recording-status {
+  min-height: 24px;
+  margin: 10px;
+  color: #ffb7c9;
 }
 
 .log {
-  max-width: 600px;
-  margin: 20px auto;
+  max-width: 650px;
+  margin: 25px auto;
   text-align: left;
-  padding: 0 15px 30px;
 }
 
-.note {
-  padding: 10px;
-  border-bottom: 1px solid #3b3247;
+.log-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.message-item {
+  background: rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 13px;
+  margin: 9px 0;
+}
+
+.message-item audio {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.small {
+  color: #aaa0ae;
+  font-size: 13px;
+  margin-top: 15px;
+}
+
+@media (max-width: 700px) {
+  .piano-area {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .piano {
+    transform-origin: center top;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🎹 Piano & 🐱 Kater</h1>
-  <div class="subtitle">Musik zwischen Mensch und KI-Kater</div>
-</header>
+<div class="app">
 
-<div class="cat">🐱</div>
+  <h1>🎹 Massiv Piano</h1>
 
-<div class="message" id="message">
-  Miau! Spiel mir eine Melodie. 🎵
-</div>
+  <div class="subtitle">
+    Musik zwischen dir und deinem KI-Kater 🐱
+  </div>
 
-<div class="piano">
+  <div class="cat">🐱</div>
 
-  <button class="key" data-note="261.63">C</button>
-  <button class="key" data-note="293.66">D</button>
-  <button class="key" data-note="329.63">E</button>
-  <button class="key" data-note="349.23">F</button>
-  <button class="key" data-note="392.00">G</button>
-  <button class="key" data-note="440.00">A</button>
-  <button class="key" data-note="493.88">H</button>
-  <button class="key" data-note="523.25">C</button>
+  <div class="message" id="message">
+    Miau! Spiel mir etwas vor. 🎵
+  </div>
 
-</div>
+  <div class="piano-area">
+    <div class="piano">
 
-<div class="controls">
+      <div class="white-keys">
 
-  <button id="playCat">
-    🐱 Kater antwortet
-  </button>
+        <button class="white" data-note="261.63">C</button>
+        <button class="white" data-note="293.66">D</button>
+        <button class="white" data-note="329.63">E</button>
+        <button class="white" data-note="349.23">F</button>
+        <button class="white" data-note="392.00">G</button>
+        <button class="white" data-note="440.00">A</button>
+        <button class="white" data-note="493.88">H</button>
+        <button class="white" data-note="523.25">C</button>
 
-  <button id="record">
-    🎙️ Aufnahme starten
-  </button>
+      </div>
 
-  <button id="stop" disabled>
-    ⏹️ Aufnahme stoppen
-  </button>
+      <button class="black black1" data-note="277.18">C#</button>
+      <button class="black black2" data-note="311.13">D#</button>
+      <button class="black black3" data-note="369.99">F#</button>
+      <button class="black black4" data-note="415.30">G#</button>
+      <button class="black black5" data-note="466.16">A#</button>
 
-</div>
+    </div>
+  </div>
 
-<div class="log" id="log">
-  <div class="note">🐱 Kater: „Ich höre dir zu...“</div>
+  <div class="controls">
+
+    <button class="control" id="catAnswer">
+      🐱 Massiv antwortet
+    </button>
+
+    <button class="control record" id="startRecord">
+      🎙️ Sprachaufnahme
+    </button>
+
+    <button class="control stop" id="stopRecord" disabled>
+      ⏹️ Stoppen
+    </button>
+
+  </div>
+
+  <div class="recording-status" id="recordingStatus"></div>
+
+  <div class="log">
+
+    <div class="log-title">
+      💬 Nachrichten zwischen dir und Massiv
+    </div>
+
+    <div id="messages">
+
+      <div class="message-item">
+        🐱 <b>Massiv:</b>
+        „Miau! Ich bin bereit für unsere Musik.“
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="small">
+    Deine Aufnahmen bleiben in dieser Browser-Sitzung.
+  </div>
+
 </div>
 
 <script>
 
-let audioContext;
+let audioContext = null;
 let melody = [];
 
-function playNote(frequency, duration = 0.45) {
+function getAudioContext() {
 
   if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext =
+      new (window.AudioContext || window.webkitAudioContext)();
   }
 
-  const oscillator = audioContext.createOscillator();
-  const gain = audioContext.createGain();
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
 
+  return audioContext;
+}
+
+function playNote(frequency, duration = 0.55) {
+
+  const ctx = getAudioContext();
+
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  oscillator.type = "triangle";
   oscillator.frequency.value = frequency;
-  oscillator.type = "sine";
 
-  gain.gain.setValueAtTime(0.001, audioContext.currentTime);
+  gain.gain.setValueAtTime(0.001, ctx.currentTime);
+
   gain.gain.exponentialRampToValueAtTime(
-    0.35,
-    audioContext.currentTime + 0.02
+    0.30,
+    ctx.currentTime + 0.02
   );
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
-    audioContext.currentTime + duration
+    ctx.currentTime + duration
   );
 
   oscillator.connect(gain);
-  gain.connect(audioContext.destination);
+  gain.connect(ctx.destination);
 
   oscillator.start();
-  oscillator.stop(audioContext.currentTime + duration);
+  oscillator.stop(ctx.currentTime + duration);
 }
 
-document.querySelectorAll(".key").forEach(key => {
+/* Piano */
+
+document.querySelectorAll(".white, .black").forEach(key => {
 
   key.addEventListener("click", () => {
 
@@ -198,119 +352,223 @@ document.querySelectorAll(".key").forEach(key => {
 
     melody.push(frequency);
 
+    if (melody.length > 20) {
+      melody.shift();
+    }
+
+    key.classList.add("active");
+
+    setTimeout(() => {
+      key.classList.remove("active");
+    }, 120);
+
     document.getElementById("message").textContent =
-      "🐱 Miau! Ich habe deine Note gehört!";
+      "🐱 Massiv hört dir zu... 🎵";
 
   });
 
 });
 
-document.getElementById("playCat").addEventListener("click", () => {
+/* Massiv antwortet */
 
-  const response = [
-    392.00,
-    440.00,
-    523.25,
-    440.00,
-    392.00,
-    329.63
-  ];
+const catMelody = [
+  392.00,
+  440.00,
+  523.25,
+  440.00,
+  392.00,
+  329.63,
+  392.00
+];
+
+function speakMassiv(text) {
+
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const voice = new SpeechSynthesisUtterance(text);
+
+  voice.lang = "de-DE";
+  voice.rate = 0.85;
+  voice.pitch = 1.35;
+  voice.volume = 1;
+
+  window.speechSynthesis.speak(voice);
+}
+
+document.getElementById("catAnswer")
+.addEventListener("click", () => {
 
   document.getElementById("message").textContent =
-    "🐱 Dein Kater antwortet musikalisch...";
+    "🐱 Massiv denkt über deine Melodie nach...";
 
-  response.forEach((note, index) => {
+  const answer =
+    "Miau! Ich habe deine Musik gehört. Jetzt spiele ich dir meine Antwort.";
+
+  speakMassiv(answer);
+
+  catMelody.forEach((note, index) => {
 
     setTimeout(() => {
-      playNote(note, 0.5);
+      playNote(note, 0.48);
     }, index * 500);
 
   });
 
-  const log = document.getElementById("log");
-
   const item = document.createElement("div");
 
-  item.className = "note";
-  item.textContent =
-    "🐱 Kater: „Miau... das ist meine Antwort auf deine Melodie.“";
+  item.className = "message-item";
 
-  log.appendChild(item);
+  item.innerHTML =
+    "🐱 <b>Massiv:</b> „Miau! Ich habe deine Melodie gehört. Hör meine Antwort.“";
+
+  document.getElementById("messages").appendChild(item);
 
 });
 
-let recorder;
+/* Sprachaufnahme */
+
+let recorder = null;
+let recordingStream = null;
 let audioChunks = [];
 
-document.getElementById("record").addEventListener("click", async () => {
+function getRecordingType() {
+
+  if (
+    typeof MediaRecorder !== "undefined" &&
+    MediaRecorder.isTypeSupported("audio/mp4")
+  ) {
+    return "audio/mp4";
+  }
+
+  if (
+    typeof MediaRecorder !== "undefined" &&
+    MediaRecorder.isTypeSupported("audio/webm")
+  ) {
+    return "audio/webm";
+  }
+
+  return "";
+}
+
+document.getElementById("startRecord")
+.addEventListener("click", async () => {
+
+  if (!navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia) {
+
+    document.getElementById("recordingStatus").textContent =
+      "⚠️ Dein Browser unterstützt keine Mikrofonaufnahme.";
+
+    return;
+  }
 
   try {
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true
-    });
-
-    recorder = new MediaRecorder(stream);
-    audioChunks = [];
-
-    recorder.ondataavailable = event => {
-      audioChunks.push(event.data);
-    };
-
-    recorder.onstop = () => {
-
-      const blob = new Blob(audioChunks, {
-        type: "audio/webm"
+    recordingStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: true
       });
 
-      const url = URL.createObjectURL(blob);
+    const type = getRecordingType();
 
-      const audio = document.createElement("audio");
+    recorder = type
+      ? new MediaRecorder(recordingStream, { mimeType: type })
+      : new MediaRecorder(recordingStream);
+
+    audioChunks = [];
+
+    recorder.addEventListener("dataavailable", event => {
+
+      if (event.data && event.data.size > 0) {
+        audioChunks.push(event.data);
+      }
+
+    });
+
+    recorder.addEventListener("stop", () => {
+
+      const blobType =
+        recorder.mimeType || type || "audio/mp4";
+
+      const blob =
+        new Blob(audioChunks, { type: blobType });
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const audio =
+        document.createElement("audio");
+
       audio.controls = true;
       audio.src = url;
+      audio.preload = "metadata";
 
-      const log = document.getElementById("log");
+      const item =
+        document.createElement("div");
 
-      const item = document.createElement("div");
-      item.className = "note";
+      item.className = "message-item";
 
-      item.innerHTML = "🎙️ Deine Sprachaufnahme:<br>";
+      item.innerHTML =
+        "🎙️ <b>Du:</b> Deine Sprachaufnahme";
+
       item.appendChild(audio);
 
-      log.appendChild(item);
+      document.getElementById("messages")
+        .appendChild(item);
 
-      stream.getTracks().forEach(track => track.stop());
+      document.getElementById("message").textContent =
+        "🐱 Massiv hat deine Sprachaufnahme bekommen.";
 
-    };
+      document.getElementById("recordingStatus")
+        .textContent = "";
+
+      if (recordingStream) {
+
+        recordingStream
+          .getTracks()
+          .forEach(track => track.stop());
+
+      }
+
+    });
 
     recorder.start();
 
-    document.getElementById("record").disabled = true;
-    document.getElementById("stop").disabled = false;
+    document.getElementById("startRecord").disabled = true;
+    document.getElementById("stopRecord").disabled = false;
+
+    document.getElementById("recordingStatus")
+      .textContent = "🔴 Aufnahme läuft...";
 
     document.getElementById("message").textContent =
-      "🎙️ Ich höre zu...";
+      "🎙️ Ich höre dir zu...";
 
   } catch (error) {
 
-    document.getElementById("message").textContent =
-      "⚠️ Mikrofon konnte nicht gestartet werden.";
+    document.getElementById("recordingStatus")
+      .textContent =
+      "⚠️ Mikrofonzugriff wurde nicht erlaubt.";
 
   }
 
 });
 
-document.getElementById("stop").addEventListener("click", () => {
+document.getElementById("stopRecord")
+.addEventListener("click", () => {
 
-  if (recorder && recorder.state !== "inactive") {
+  if (recorder &&
+      recorder.state !== "inactive") {
+
     recorder.stop();
+
   }
 
-  document.getElementById("record").disabled = false;
-  document.getElementById("stop").disabled = true;
-
-  document.getElementById("message").textContent =
-    "🐱 Dein Kater hat deine Aufnahme bekommen!";
+  document.getElementById("startRecord").disabled = false;
+  document.getElementById("stopRecord").disabled = true;
 
 });
 
