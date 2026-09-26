@@ -551,7 +551,7 @@ document.getElementById("startRecord")
 
     document.getElementById("recordingStatus")
       .textContent =
-      "⚠️ Mikrofonzugriff wurde nicht erlaubt.";
+      "⚠️ " + error.name + ": " + error.message;
 
   }
 
