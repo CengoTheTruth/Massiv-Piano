@@ -75,7 +75,7 @@ button:active{transform:scale(.97)}button:disabled{opacity:.45}
   <div class="statusText" id="recordingStatus"></div>
 </div>
 
-<div class="card log">
+<div class="card"><b>🧠 Massivs kleines Gedächtnis</b><div class="row" style="margin-top:10px"><input id="memoryInput" placeholder="z.B. Unser Lieblingslied ist ..." style="flex:1;min-width:220px;padding:12px;border-radius:12px;border:0"><button id="saveMemory">💾 Merken</button><button id="clearMemory" class="stop">🗑️ Vergessen</button></div><div id="memoryList" class="small" style="text-align:left"></div></div><div class="card"><b>🎛️ Unser Musikstudio</b><div class="row" style="margin-top:10px"><button id="playMelody">▶️ Meine Melodie abspielen</button><button id="clearMelody" class="stop">↩️ Melodie löschen</button><label style="display:flex;align-items:center;gap:8px">🔊 Lautstärke <input id="volume" type="range" min="0" max="1" step=".05" value=".8"></label></div></div><div class="card"><b>❤️ Wie fühlt sich Massiv an?</b><div class="row" style="margin-top:10px"><button data-mood="glücklich">😸 Glücklich</button><button data-mood="verspielt">😹 Verspielt</button><button data-mood="ruhig">😺 Ruhig</button><button data-mood="neugierig">🙀 Neugierig</button></div></div><div class="card log">
   <b>💬 Was zwischen dir und Massiv passiert</b>
   <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin bereit für unsere Musik.“</div></div>
 </div>
@@ -83,15 +83,15 @@ button:active{transform:scale(.97)}button:disabled{opacity:.45}
 </div>
 
 <script>
-let ctx=null, melody=[], recorder=null, recordingStream=null, chunks=[], massivRunning=false, audioTimer=null;
+let ctx=null, melody=[], recorder=null, recordingStream=null, chunks=[], massivRunning=false, audioTimer=null, volume=.8;
 const $=id=>document.getElementById(id);
 function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
-function note(f,d=.48,when=0){const c=audio(),o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.001,c.currentTime+when);g.gain.exponentialRampToValueAtTime(.25,c.currentTime+when+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+when+d);o.connect(g);g.connect(c.destination);o.start(c.currentTime+when);o.stop(c.currentTime+when+d+.03)}
+function note(f,d=.48,when=0){const c=audio(),o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=f;const v=Math.max(.001,.32*volume);g.gain.setValueAtTime(.001,c.currentTime+when);g.gain.exponentialRampToValueAtTime(v,c.currentTime+when+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+when+d);o.connect(g);g.connect(c.destination);o.start(c.currentTime+when);o.stop(c.currentTime+when+d+.03)}
 function speak(t){if(!("speechSynthesis"in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.88;u.pitch=1.28;u.volume=1;speechSynthesis.speak(u)}
 function addMsg(html){const x=document.createElement("div");x.className="item";x.innerHTML=html;$("messages").appendChild(x);x.scrollIntoView({behavior:"smooth",block:"nearest"})}
 
 document.querySelectorAll(".white,.black").forEach(k=>k.addEventListener("pointerdown",e=>{
-e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>24)melody.shift();k.classList.add("active");setTimeout(()=>k.classList.remove("active"),120);$("message").textContent="🐱 Massiv hört deine Melodie… 🎵";
+e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>24)melody.shift();k.classList.add("active");setTimeout(()=>k.classList.remove("active"),120);$("message").textContent="🐱 Massiv hört deine Melodie… 🎵"; localStorage.setItem("massivMelody",JSON.stringify(melody));
 }));
 
 function drawMassiv(t=0){
@@ -101,7 +101,7 @@ const bob=Math.sin(t/380)*7;x.font="150px serif";x.textAlign="center";x.textBase
 x.font="bold 24px Arial";x.fillStyle="#fff";x.fillText(massivRunning?"Massiv singt & hört 🎵":"Massiv ist bereit 🐾",w/2,h-38);
 if(massivRunning)requestAnimationFrame(drawMassiv);
 }
-drawMassiv();
+drawMassiv();\nfunction renderMemory(){const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");$("memoryList").innerHTML=a.length?a.map((x,i)=>`<div>💭 ${i+1}. ${x}</div>`).join(""):"Noch nichts gemerkt – wir können gemeinsam Erinnerungen sammeln."; }\nrenderMemory();\n$("saveMemory").onclick=()=>{const v=$("memoryInput").value.trim();if(!v)return;const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");a.push(v);localStorage.setItem("massivMemory",JSON.stringify(a.slice(-30)));$("memoryInput").value="";renderMemory();$("message").textContent="🐱 Massiv merkt sich das für diese App auf diesem Gerät.";speak("Miau! Das merke ich mir.");};\n$("clearMemory").onclick=()=>{localStorage.removeItem("massivMemory");renderMemory();$("message").textContent="🐱 Okay, ich habe die gespeicherten Erinnerungen gelöscht.";};\n$("volume").oninput=e=>volume=+e.target.value;\n$("playMelody").onclick=()=>{const m=melody.length?melody:JSON.parse(localStorage.getItem("massivMelody")||"[]");if(!m.length){$("message").textContent="🐱 Noch keine Melodie zum Abspielen.";return;}m.forEach((f,i)=>note(f,.42,i*.46));$("message").textContent="🎹 Deine Melodie läuft.";};\n$("clearMelody").onclick=()=>{melody=[];localStorage.removeItem("massivMelody");$("message").textContent="🎹 Unsere Melodie wurde gelöscht.";};\ndocument.querySelectorAll("[data-mood]").forEach(b=>b.onclick=()=>{const m=b.dataset.mood;localStorage.setItem("massivMood",m);$("message").textContent="🐱 Massiv fühlt sich gerade "+m+".";speak("Miau! Heute bin ich "+m+".");});
 
 $("massivCamBtn").onclick=()=>{massivRunning=!massivRunning;$("massivCamStatus").textContent=massivRunning?"Massiv-Kamera läuft":"Massiv ist bereit";$("massivCamBtn").textContent=massivRunning?"⏹️ Massivs Kamera stoppen":"🐱 Massivs Kamera starten";if(massivRunning)requestAnimationFrame(drawMassiv)};
 
