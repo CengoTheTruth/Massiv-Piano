@@ -1,578 +1,147 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Massiv Piano</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17131d">
+<title>Massiv Piano – Video & Musik</title>
 <style>
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top, #392b48 0%, #17131d 55%, #0d0b11 100%);
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
-
-.app {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px 12px 40px;
-}
-
-h1 {
-  margin: 5px 0;
-  font-size: 30px;
-}
-
-.subtitle {
-  color: #c9bfd2;
-  margin-bottom: 18px;
-}
-
-.cat {
-  font-size: 75px;
-  margin: 5px;
-}
-
-.message {
-  max-width: 650px;
-  margin: 12px auto 22px;
-  padding: 15px 18px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 18px;
-  min-height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* PIANO */
-
-.piano-area {
-  width: 100%;
-  overflow-x: auto;
-  padding: 10px 0 20px;
-}
-
-.piano {
-  position: relative;
-  width: 620px;
-  height: 230px;
-  margin: auto;
-  user-select: none;
-  touch-action: manipulation;
-}
-
-.white-keys {
-  display: flex;
-  height: 230px;
-}
-
-.white {
-  position: relative;
-  width: 77px;
-  height: 230px;
-  background: linear-gradient(to bottom, #ffffff, #e8e8e8);
-  border: 1px solid #aaa;
-  border-radius: 0 0 9px 9px;
-  color: #333;
-  font-size: 15px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 16px;
-  cursor: pointer;
-  box-shadow: inset 0 -7px 0 rgba(0,0,0,0.08);
-}
-
-.white:active,
-.white.active {
-  background: #d5d5d5;
-  transform: translateY(3px);
-}
-
-.black {
-  position: absolute;
-  top: 0;
-  width: 48px;
-  height: 145px;
-  background: linear-gradient(to bottom, #333, #050505);
-  border: 1px solid #000;
-  border-radius: 0 0 7px 7px;
-  z-index: 5;
-  color: white;
-  cursor: pointer;
-  box-shadow: 0 6px 9px rgba(0,0,0,0.45);
-}
-
-.black:active,
-.black.active {
-  background: #555;
-  transform: translateY(3px);
-}
-
-.black1 { left: 53px; }
-.black2 { left: 130px; }
-.black3 { left: 284px; }
-.black4 { left: 361px; }
-.black5 { left: 438px; }
-
-.controls {
-  margin: 18px auto;
-  max-width: 650px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-button.control {
-  min-height: 48px;
-  padding: 12px 18px;
-  border: 0;
-  border-radius: 14px;
-  background: #8964b7;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button.control:active {
-  transform: scale(.97);
-}
-
-button.record {
-  background: #a93658;
-}
-
-button.stop {
-  background: #555;
-}
-
-button:disabled {
-  opacity: .45;
-}
-
-.recording-status {
-  min-height: 24px;
-  margin: 10px;
-  color: #ffb7c9;
-}
-
-.log {
-  max-width: 650px;
-  margin: 25px auto;
-  text-align: left;
-}
-
-.log-title {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.message-item {
-  background: rgba(255,255,255,0.07);
-  border-radius: 14px;
-  padding: 13px;
-  margin: 9px 0;
-}
-
-.message-item audio {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.small {
-  color: #aaa0ae;
-  font-size: 13px;
-  margin-top: 15px;
-}
-
-@media (max-width: 700px) {
-  .piano-area {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .piano {
-    transform-origin: center top;
-  }
-}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#392b48,#17131d 55%,#0d0b11);color:#fff;font-family:Arial,sans-serif}
+.app{max-width:980px;margin:auto;padding:18px 12px 42px}
+h1{margin:4px 0;font-size:30px;text-align:center}.sub{text-align:center;color:#c9bfd2;margin-bottom:16px}
+.card{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:14px;margin:12px auto;max-width:900px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.videos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.videoBox{position:relative;background:#09080c;border-radius:16px;overflow:hidden;min-height:220px;aspect-ratio:16/10}
+.videoBox video,.videoBox canvas{width:100%;height:100%;object-fit:cover;display:block}
+.label{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.6);padding:7px 10px;border-radius:12px;font-weight:bold;font-size:13px;z-index:3}
+.status{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.6);padding:7px 10px;border-radius:12px;font-size:12px;z-index:3}
+.message{padding:13px 16px;border-radius:16px;background:rgba(255,255,255,.08);text-align:center;min-height:48px}
+.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+button{border:0;border-radius:14px;padding:12px 16px;min-height:46px;background:#8964b7;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+button:active{transform:scale(.97)}button:disabled{opacity:.45}
+.record{background:#a93658}.stop{background:#555}.green{background:#397a61}
+.piano-area{overflow-x:auto;padding:6px 0 14px}.piano{position:relative;width:616px;height:215px;margin:auto;touch-action:none;user-select:none}
+.white-keys{display:flex;height:215px}.white{width:77px;height:215px;background:linear-gradient(#fff,#e7e7e7);border:1px solid #aaa;border-radius:0 0 9px 9px;color:#333;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
+.black{position:absolute;top:0;width:48px;height:135px;background:linear-gradient(#333,#050505);border:1px solid #000;border-radius:0 0 7px 7px;z-index:4;color:#fff}.black1{left:53px}.black2{left:130px}.black3{left:284px}.black4{left:361px}.black5{left:438px}
+.white.active{background:#d0d0d0}.black.active{background:#666}
+.row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}.statusText{color:#ffb7c9;min-height:22px;text-align:center;margin:8px}
+.log{max-width:760px;margin:auto}.item{background:rgba(255,255,255,.065);border-radius:14px;padding:12px;margin:8px 0;text-align:left}.item audio{width:100%;margin-top:8px}
+.small{font-size:12px;color:#a9a0ad;text-align:center;margin-top:16px}
+@media(max-width:700px){.videos{grid-template-columns:1fr}.videoBox{min-height:210px}}
 </style>
 </head>
-
 <body>
-
 <div class="app">
+<h1>🎹 Massiv Piano</h1>
+<div class="sub">Video • Stimme • Piano – gemeinsam mit Massiv 🐱</div>
 
-  <h1>🎹 Massiv Piano</h1>
-
-  <div class="subtitle">
-    Musik zwischen dir und deinem KI-Kater 🐱
+<div class="card">
+  <div class="videos">
+    <div class="videoBox">
+      <video id="myVideo" autoplay playsinline muted></video>
+      <div class="label">📱 Du</div><div class="status" id="myCamStatus">Kamera aus</div>
+    </div>
+    <div class="videoBox">
+      <canvas id="massivCanvas" width="640" height="400"></canvas>
+      <div class="label">🐱 Massiv</div><div class="status" id="massivCamStatus">Massiv ist bereit</div>
+    </div>
   </div>
-
-  <div class="cat">🐱</div>
-
-  <div class="message" id="message">
-    Miau! Spiel mir etwas vor. 🎵
+  <div class="controls">
+    <button id="cameraBtn">📷 Meine Kamera einschalten</button>
+    <button class="green" id="massivCamBtn">🐱 Massivs Kamera starten</button>
   </div>
+</div>
 
+<div class="card">
+  <div class="message" id="message">Miau! Spiel mir etwas vor – ich höre zu. 🎵</div>
   <div class="piano-area">
     <div class="piano">
-
       <div class="white-keys">
-
-        <button class="white" data-note="261.63">C</button>
-        <button class="white" data-note="293.66">D</button>
-        <button class="white" data-note="329.63">E</button>
-        <button class="white" data-note="349.23">F</button>
-        <button class="white" data-note="392.00">G</button>
-        <button class="white" data-note="440.00">A</button>
-        <button class="white" data-note="493.88">H</button>
-        <button class="white" data-note="523.25">C</button>
-
+        <button class="white" data-note="261.63">C</button><button class="white" data-note="293.66">D</button>
+        <button class="white" data-note="329.63">E</button><button class="white" data-note="349.23">F</button>
+        <button class="white" data-note="392.00">G</button><button class="white" data-note="440.00">A</button>
+        <button class="white" data-note="493.88">H</button><button class="white" data-note="523.25">C</button>
       </div>
-
-      <button class="black black1" data-note="277.18">C#</button>
-      <button class="black black2" data-note="311.13">D#</button>
-      <button class="black black3" data-note="369.99">F#</button>
-      <button class="black black4" data-note="415.30">G#</button>
-      <button class="black black5" data-note="466.16">A#</button>
-
+      <button class="black black1" data-note="277.18">C#</button><button class="black black2" data-note="311.13">D#</button>
+      <button class="black black3" data-note="369.99">F#</button><button class="black black4" data-note="415.30">G#</button><button class="black black5" data-note="466.16">A#</button>
     </div>
   </div>
-
-  <div class="controls">
-
-    <button class="control" id="catAnswer">
-      🐱 Massiv antwortet
-    </button>
-
-    <button class="control record" id="startRecord">
-      🎙️ Sprachaufnahme
-    </button>
-
-    <button class="control stop" id="stopRecord" disabled>
-      ⏹️ Stoppen
-    </button>
-
+  <div class="row">
+    <button id="catAnswer">🐱 Massiv antwortet mit Melodie</button>
+    <button class="record" id="startRecord">🎙️ Stimme an Massiv</button>
+    <button class="stop" id="stopRecord" disabled>⏹️ Stoppen & senden</button>
   </div>
+  <div class="statusText" id="recordingStatus"></div>
+</div>
 
-  <div class="recording-status" id="recordingStatus"></div>
-
-  <div class="log">
-
-    <div class="log-title">
-      💬 Nachrichten zwischen dir und Massiv
-    </div>
-
-    <div id="messages">
-
-      <div class="message-item">
-        🐱 <b>Massiv:</b>
-        „Miau! Ich bin bereit für unsere Musik.“
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="small">
-    Deine Aufnahmen bleiben in dieser Browser-Sitzung.
-  </div>
-
+<div class="card log">
+  <b>💬 Was zwischen dir und Massiv passiert</b>
+  <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin bereit für unsere Musik.“</div></div>
+</div>
+<div class="small">Die Kamera- und Mikrofonfreigabe erfolgt direkt in deinem Browser. Die Massiv-Kamera ist hier als animiertes Live-Fenster umgesetzt; für eine echte entfernte Kamera braucht es eine zweite Videoquelle/WebRTC-Verbindung.</div>
 </div>
 
 <script>
+let ctx=null, melody=[], recorder=null, recordingStream=null, chunks=[], massivRunning=false, audioTimer=null;
+const $=id=>document.getElementById(id);
+function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
+function note(f,d=.48,when=0){const c=audio(),o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.001,c.currentTime+when);g.gain.exponentialRampToValueAtTime(.25,c.currentTime+when+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+when+d);o.connect(g);g.connect(c.destination);o.start(c.currentTime+when);o.stop(c.currentTime+when+d+.03)}
+function speak(t){if(!("speechSynthesis"in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.88;u.pitch=1.28;u.volume=1;speechSynthesis.speak(u)}
+function addMsg(html){const x=document.createElement("div");x.className="item";x.innerHTML=html;$("messages").appendChild(x);x.scrollIntoView({behavior:"smooth",block:"nearest"})}
 
-let audioContext = null;
-let melody = [];
+document.querySelectorAll(".white,.black").forEach(k=>k.addEventListener("pointerdown",e=>{
+e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>24)melody.shift();k.classList.add("active");setTimeout(()=>k.classList.remove("active"),120);$("message").textContent="🐱 Massiv hört deine Melodie… 🎵";
+}));
 
-function getAudioContext() {
-
-  if (!audioContext) {
-    audioContext =
-      new (window.AudioContext || window.webkitAudioContext)();
-  }
-
-  if (audioContext.state === "suspended") {
-    audioContext.resume();
-  }
-
-  return audioContext;
+function drawMassiv(t=0){
+const c=$("massivCanvas"),x=c.getContext("2d"),w=c.width,h=c.height;x.clearRect(0,0,w,h);
+const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,"#33243f");g.addColorStop(1,"#0c0a10");x.fillStyle=g;x.fillRect(0,0,w,h);
+const bob=Math.sin(t/380)*7;x.font="150px serif";x.textAlign="center";x.textBaseline="middle";x.fillText("🐱",w/2,h/2+bob);
+x.font="bold 24px Arial";x.fillStyle="#fff";x.fillText(massivRunning?"Massiv singt & hört 🎵":"Massiv ist bereit 🐾",w/2,h-38);
+if(massivRunning)requestAnimationFrame(drawMassiv);
 }
+drawMassiv();
 
-function playNote(frequency, duration = 0.55) {
+$("massivCamBtn").onclick=()=>{massivRunning=!massivRunning;$("massivCamStatus").textContent=massivRunning?"Massiv-Kamera läuft":"Massiv ist bereit";$("massivCamBtn").textContent=massivRunning?"⏹️ Massivs Kamera stoppen":"🐱 Massivs Kamera starten";if(massivRunning)requestAnimationFrame(drawMassiv)};
 
-  const ctx = getAudioContext();
+$("cameraBtn").onclick=async()=>{
+try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});$("myVideo").srcObject=s;$("myCamStatus").textContent="Kamera an";$("cameraBtn").textContent="📷 Kamera läuft";$("message").textContent="📷 Deine Kamera ist an – Massiv kann dich sehen."}
+catch(e){$("myCamStatus").textContent="Kamera blockiert";$("message").textContent="⚠️ Kamera konnte nicht geöffnet werden: "+e.name}}
+;
 
-  const oscillator = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  oscillator.type = "triangle";
-  oscillator.frequency.value = frequency;
-
-  gain.gain.setValueAtTime(0.001, ctx.currentTime);
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.30,
-    ctx.currentTime + 0.02
-  );
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.001,
-    ctx.currentTime + duration
-  );
-
-  oscillator.connect(gain);
-  gain.connect(ctx.destination);
-
-  oscillator.start();
-  oscillator.stop(ctx.currentTime + duration);
+const base=[392,440,523.25,440,392,329.63,349.23,392];
+function answerMelody(){
+if(!melody.length){$("message").textContent="🐱 Spiel erst ein paar Töne, dann antworte ich darauf.";speak("Miau! Spiel mir erst eine kleine Melodie vor.");return}
+const picked=melody.slice(-8), reply=[];
+picked.forEach((f,i)=>reply.push(f*([1,1.1225,.9439,1.1892][i%4])));
+reply.push(...base.slice(0,3));reply.forEach((f,i)=>note(Math.min(880,Math.max(220,f)),.42,i*.46));
+massivRunning=true;$("massivCamStatus").textContent="Massiv spielt deine Antwort";requestAnimationFrame(drawMassiv);
+$("message").textContent="🐱 Massiv hat deine Melodie gehört und antwortet kreativ. 🎶";
+speak("Miau! Ich habe deine Melodie gehört. Jetzt kommt meine Antwort.");
+addMsg("🐱 <b>Massiv:</b> „Deine Melodie hat mir gefallen. Hör mal, was ich daraus gemacht habe! 🎵“");
 }
-
-/* Piano */
-
-document.querySelectorAll(".white, .black").forEach(key => {
-
-  key.addEventListener("click", () => {
-
-    const frequency = Number(key.dataset.note);
-
-    playNote(frequency);
-
-    melody.push(frequency);
-
-    if (melody.length > 20) {
-      melody.shift();
-    }
-
-    key.classList.add("active");
-
-    setTimeout(() => {
-      key.classList.remove("active");
-    }, 120);
-
-    document.getElementById("message").textContent =
-      "🐱 Massiv hört dir zu... 🎵";
-
-  });
-
-});
-
-/* Massiv antwortet */
-
-const catMelody = [
-  392.00,
-  440.00,
-  523.25,
-  440.00,
-  392.00,
-  329.63,
-  392.00
-];
-
-function speakMassiv(text) {
-
-  if (!("speechSynthesis" in window)) {
-    return;
-  }
-
-  window.speechSynthesis.cancel();
-
-  const voice = new SpeechSynthesisUtterance(text);
-
-  voice.lang = "de-DE";
-  voice.rate = 0.85;
-  voice.pitch = 1.35;
-  voice.volume = 1;
-
-  window.speechSynthesis.speak(voice);
-}
-
-document.getElementById("catAnswer")
-.addEventListener("click", () => {
-
-  document.getElementById("message").textContent =
-    "🐱 Massiv denkt über deine Melodie nach...";
-
-  const answer =
-    "Miau! Ich habe deine Musik gehört. Jetzt spiele ich dir meine Antwort.";
-
-  speakMassiv(answer);
-
-  catMelody.forEach((note, index) => {
-
-    setTimeout(() => {
-      playNote(note, 0.48);
-    }, index * 500);
-
-  });
-
-  const item = document.createElement("div");
-
-  item.className = "message-item";
-
-  item.innerHTML =
-    "🐱 <b>Massiv:</b> „Miau! Ich habe deine Melodie gehört. Hör meine Antwort.“";
-
-  document.getElementById("messages").appendChild(item);
-
-});
-
-/* Sprachaufnahme */
-
-let recorder = null;
-let recordingStream = null;
-let audioChunks = [];
-
-function getRecordingType() {
-
-  if (
-    typeof MediaRecorder !== "undefined" &&
-    MediaRecorder.isTypeSupported("audio/mp4")
-  ) {
-    return "audio/mp4";
-  }
-
-  if (
-    typeof MediaRecorder !== "undefined" &&
-    MediaRecorder.isTypeSupported("audio/webm")
-  ) {
-    return "audio/webm";
-  }
-
-  return "";
-}
-
-document.getElementById("startRecord")
-.addEventListener("click", async () => {
-
-  if (!navigator.mediaDevices ||
-      !navigator.mediaDevices.getUserMedia) {
-
-    document.getElementById("recordingStatus").textContent =
-      "⚠️ Dein Browser unterstützt keine Mikrofonaufnahme.";
-
-    return;
-  }
-
-  try {
-
-    recordingStream =
-      await navigator.mediaDevices.getUserMedia({
-        audio: true
-      });
-
-    const type = getRecordingType();
-
-    recorder = type
-      ? new MediaRecorder(recordingStream, { mimeType: type })
-      : new MediaRecorder(recordingStream);
-
-    audioChunks = [];
-
-    recorder.addEventListener("dataavailable", event => {
-
-      if (event.data && event.data.size > 0) {
-        audioChunks.push(event.data);
-      }
-
-    });
-
-    recorder.addEventListener("stop", () => {
-
-      const blobType =
-        recorder.mimeType || type || "audio/mp4";
-
-      const blob =
-        new Blob(audioChunks, { type: blobType });
-
-      const url =
-        URL.createObjectURL(blob);
-
-      const audio =
-        document.createElement("audio");
-
-      audio.controls = true;
-      audio.src = url;
-      audio.preload = "metadata";
-
-      const item =
-        document.createElement("div");
-
-      item.className = "message-item";
-
-      item.innerHTML =
-        "🎙️ <b>Du:</b> Deine Sprachaufnahme";
-
-      item.appendChild(audio);
-
-      document.getElementById("messages")
-        .appendChild(item);
-
-      document.getElementById("message").textContent =
-        "🐱 Massiv hat deine Sprachaufnahme bekommen.";
-
-      document.getElementById("recordingStatus")
-        .textContent = "";
-
-      if (recordingStream) {
-
-        recordingStream
-          .getTracks()
-          .forEach(track => track.stop());
-
-      }
-
-    });
-
-    recorder.start();
-
-    document.getElementById("startRecord").disabled = true;
-    document.getElementById("stopRecord").disabled = false;
-
-    document.getElementById("recordingStatus")
-      .textContent = "🔴 Aufnahme läuft...";
-
-    document.getElementById("message").textContent =
-      "🎙️ Ich höre dir zu...";
-
-  } catch (error) {
-
-    document.getElementById("recordingStatus")
-      .textContent =
-      "⚠️ " + error.name + ": " + error.message;
-
-  }
-
-});
-
-document.getElementById("stopRecord")
-.addEventListener("click", () => {
-
-  if (recorder &&
-      recorder.state !== "inactive") {
-
-    recorder.stop();
-
-  }
-
-  document.getElementById("startRecord").disabled = false;
-  document.getElementById("stopRecord").disabled = true;
-
-});
-
+$("catAnswer").onclick=answerMelody;
+
+function mime(){if(typeof MediaRecorder==="undefined")return "";for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){try{if(MediaRecorder.isTypeSupported(t))return t}catch(e){}}return ""}
+$("startRecord").onclick=async()=>{
+try{
+if(!navigator.mediaDevices?.getUserMedia)throw new Error("Mikrofonaufnahme wird von diesem Browser nicht unterstützt.");
+recordingStream=await navigator.mediaDevices.getUserMedia({audio:true});const type=mime();recorder=type?new MediaRecorder(recordingStream,{mimeType:type}):new MediaRecorder(recordingStream);chunks=[];
+recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+recorder.onstop=()=>{
+const blob=new Blob(chunks,{type:recorder.mimeType||type||"audio/mp4"}),url=URL.createObjectURL(blob);
+addMsg("🎙️ <b>Du an Massiv:</b> „Sprachnachricht“<audio controls src=""+url+""></audio>");
+$("message").textContent="🐱 Massiv hat deine Sprachaufnahme erhalten. 🎧";
+$("recordingStatus").textContent="✓ Sprachaufnahme an Massiv gesendet";
+speak("Miau! Ich habe deine Sprachnachricht bekommen.");
+addMsg("🐱 <b>Massiv:</b> „Miau! Ich hab dich gehört. Erzähl mir mehr.“");
+recordingStream?.getTracks().forEach(t=>t.stop());recordingStream=null;
+};
+recorder.start();$("startRecord").disabled=true;$("stopRecord").disabled=false;$("recordingStatus").textContent="🔴 Massiv hört dir zu…";$("message").textContent="🎙️ Sprich zu Massiv…";
+}catch(e){$("recordingStatus").textContent="⚠️ "+e.message}
+};
+$("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();$("startRecord").disabled=false;$("stopRecord").disabled=true};
 </script>
-
 </body>
 </html>
