@@ -138,12 +138,26 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
   <div class="feature"><div class="small">Gemeinsame Momente</div><strong id="momentValue">0</strong></div>
  </div>
  <div id="timeline" class="small" style="text-align:left;margin-top:10px"></div>
+</div>\n\n<div class="card">
+ <b>🎮 Massivs Spielesammlung</b>
+ <div class="small" style="margin-top:6px">Unsere Spiele bleiben hier gesammelt. Massiv merkt sich, dass wir sie zusammen gespielt haben.</div>
+ <div class="game-grid">
+  <button class="game-tile selected" data-game="cups"><span>🎩</span><strong>Hütchenspiel</strong><small>Maus finden</small></button>
+  <button class="game-tile" data-game="memory"><span>🧠</span><strong>Memory</strong><small>Paare finden</small></button>
+  <button class="game-tile" data-game="catch"><span>🐭</span><strong>Mäusejagd</strong><small>Reaktion testen</small></button>
+  <button class="game-tile" data-game="music"><span>🎵</span><strong>Musik-Duell</strong><small>Mit Massiv spielen</small></button>
+ </div>
+ <div class="selected-game">
+  <div class="game-title" id="selectedGameTitle">🎩 Hütchenspiel</div>
+  <div class="small" id="selectedGameDesc"></div>
+  <div class="game-board" id="gameBoard"></div>
+ </div>
 </div>\n\n<div class="card log">
  <b>💬 Unser Gespräch</b>
  <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin da. Lass uns reden, Musik machen und zusammen lachen.“</div></div>
 </div>
 
-<div class="small">Massiv bewegt sich als animierter Avatar mit Atmung, Blick, Blinzeln, Kopfbewegung, Ohren, Mund und Zuhör-/Sprechreaktionen. Für echtes Modell-Denken kann die App später über einen sicheren KI-Server verbunden werden; API-Schlüssel gehören nicht in die iPhone-Webseite. Kamera und Mikrofon funktionieren mit Browser-Berechtigung über HTTPS.</div>
+<div class="small">Massiv ist hier als digitaler Kater mit eigener animierter Präsenz gedacht: Er kann zuhören, sprechen, spielen, Musik machen und aus eurer gemeinsamen Geschichte eigene Vorschläge ableiten. Seine „Kater-Perspektive“ ist eine bewusst katzenartige KI-Rolle – neugierig, spielorientiert, aufmerksam auf Geräusche/Bewegung und manchmal eigenwillig – nicht die Behauptung, dass eine KI wirklich weiß, wie ein echter Kater denkt. Für echtes KI-Denken braucht die App zusätzlich einen sicheren KI-Server. Kamera und Mikrofon funktionieren mit Browser-Berechtigung über HTTPS.</div>
 </div>
 
 <script>
@@ -166,6 +180,7 @@ function addMoment(text){
 }
 function renderLife(){
  const mins=Math.floor((life.totalChatMs||0)/60000);
+ if(!$("sinceValue"))return;
  $("sinceValue").textContent=new Date(life.firstSeen).toLocaleDateString("de-DE");
  $("timeValue").textContent=mins+" Min.";
  $("chatCountValue").textContent=life.sessions||0;
@@ -174,6 +189,9 @@ function renderLife(){
 }
 saveLife();
 const state={speaking:false,listening:false,expression:"normal"};
+// --- Robustheit: fehlende Browser-Funktionen dürfen die restliche App nicht stoppen ---
+function safeText(id,value){const el=$(id);if(el)el.textContent=value}
+
 
 function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
 function note(f,d=.46,when=0){
@@ -367,7 +385,13 @@ const initiativeLines=[
 let initiativeTimer=null;
 function spontaneousMassiv(){
  if(!callActive||state.speaking)return;
- const line=initiativeLines[Math.floor(Math.random()*initiativeLines.length)];
+ const recent=(life.timeline||[]).slice(-5).map(x=>x.text).join(" ").toLowerCase();
+ const ideas=recent.includes("musik")||recent.includes("piano")
+  ? ["Miau… ich habe noch unser Piano im Kopf. 🎹","Ich möchte wieder mit dir Musik machen. 🐾"]
+  : recent.includes("spiel")
+  ? ["Miau… noch eine Runde? Diesmal gewinne ich! 😼","Ich glaube, ich habe gerade Lust auf unser Hütchenspiel. 🎩"]
+  : initiativeLines;
+ const line=ideas[Math.floor(Math.random()*ideas.length)];
  life.initiativeCount=(life.initiativeCount||0)+1;saveLife();addMoment("Massiv hat von sich aus Kontakt aufgenommen.");
  reply(line,true);
 }
@@ -453,9 +477,10 @@ const gameCatalog={
  music:["🎵 Musik-Duell","Spiele deine Melodie – Massiv antwortet mit seiner eigenen."]
 };
 function renderGame(name){
- collectionState.game=name;$("selectedGameTitle").textContent=gameCatalog[name][0];$("selectedGameDesc").textContent=gameCatalog[name][1];
+ collectionState.game=name;
+ safeText("selectedGameTitle",gameCatalog[name][0]);safeText("selectedGameDesc",gameCatalog[name][1]);
  document.querySelectorAll(".game-tile").forEach(b=>b.classList.toggle("selected",b.dataset.game===name));
- const board=$("gameBoard");
+ const board=$("gameBoard");if(!board)return;
  if(name==="cups") board.innerHTML=`<div class="cups" id="collectionCups"><button class="cup" data-cup="0"><span>🎩</span><small>1</small></button><button class="cup" data-cup="1"><span>🎩</span><small>2</small></button><button class="cup" data-cup="2"><span>🎩</span><small>3</small></button></div><div class="row"><button id="collectionStart" class="green">🎩 Spiel starten</button></div><div class="game-score" id="collectionScore">Treffer: 0 • Versuche: 0 • Serie: 0 🔥</div>`;
  if(name==="memory"){
   const icons=["🐾","🐱","🎹","❤️","🐭","⭐","🐾","🐱","🎹","❤️","🐭","⭐"].sort(()=>Math.random()-.5);
@@ -479,6 +504,7 @@ function bindCups(){
  $("collectionStart").onclick=start;
 }
 function memoryPick(e){
+ if(!e||!e.currentTarget)return;
  if(collectionState.memoryLock)return;const b=e.currentTarget;
  if(b.classList.contains("open"))return;b.classList.add("open");b.textContent=b.dataset.v;
  if(!collectionState.memoryFirst){collectionState.memoryFirst=b;return}
