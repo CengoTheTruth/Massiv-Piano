@@ -279,7 +279,7 @@ function reply(text,add=true){
 }
 function sendText(){
  const v=$("chatInput").value.trim();if(!v)return;
- addMsg("👤 <b>Du:</b> „"+escapeHTML(v)+"“");$("chatInput").value="";
+ addMsg("👤 <b>Du:</b> „"+escapeHTML(v)+"“");addMoment("Du hast Massiv geschrieben: "+v);$("chatInput").value="";
  if(v.toLowerCase().startsWith("merk dir "))remember(v.slice(9));setTimeout(()=>reply(aiReply(v)),260)
 }
 $("sendChat").onclick=sendText;$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendText()});
@@ -376,7 +376,11 @@ function startInitiative(){
  initiativeTimer=setInterval(()=>spontaneousMassiv(),180000);
 }
 startInitiative();
-\nwindow.addEventListener("beforeunload",()=>{audioStream?.getTracks().forEach(t=>t.stop());recordingStream?.getTracks().forEach(t=>t.stop())});
+\nfunction finishSession(){
+ if(sessionStartedAt){life.totalChatMs+=(Date.now()-sessionStartedAt);sessionStartedAt=0;saveLife();renderLife();}
+}
+window.addEventListener("pagehide",finishSession);
+window.addEventListener("beforeunload",()=>{finishSession();audioStream?.getTracks().forEach(t=>t.stop());recordingStream?.getTracks().forEach(t=>t.stop())});
 
 // --- MIAU sound, longer melodies and Massiv's shell game ---
 function meow(){
