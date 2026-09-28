@@ -152,7 +152,30 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
   <div class="small" id="selectedGameDesc"></div>
   <div class="game-board" id="gameBoard"></div>
  </div>
-</div>\n\n<div class="card log">
+</div>\n\n
+<div class="card" id="internetCard">
+ <b>🌐 Massivs Internet-Welt & Quellen</b>
+ <div class="small" style="margin-top:6px">Massiv kann öffentliche Informationen recherchieren und Quellen sammeln. Für private YouTube-/Google-Daten wird eine ausdrückliche OAuth-Freigabe benötigt. Konten werden nur nach deiner ausdrücklichen Verbindung genutzt.</div>
+ <div class="row" style="margin-top:10px">
+  <input id="researchInput" type="text" placeholder="z.B. Katzenverhalten, Musik, ein Video …">
+  <button id="researchBtn" class="green">🔎 Massiv recherchiert</button>
+ </div>
+ <div class="row" style="margin-top:8px">
+  <button id="youtubeSearchBtn">▶️ YouTube suchen</button>
+  <button id="webSearchBtn" class="dark">🌍 Web suchen</button>
+ </div>
+ <div class="feature" style="margin-top:10px">
+  <b>🔗 Meine Verbindungen</b>
+  <div class="row" style="margin-top:8px">
+   <button id="youtubeConnect" class="dark">YouTube verbinden</button>
+   <button id="googleConnect" class="dark">Google verbinden</button>
+  </div>
+  <div id="connectionStatus" class="small" style="margin-top:8px">Noch keine Konten verbunden.</div>
+ </div>
+ <div id="researchResults" class="small" style="text-align:left;margin-top:10px"></div>
+</div>
+
+<div class="card log">
  <b>💬 Unser Gespräch</b>
  <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin da. Lass uns reden, Musik machen und zusammen lachen.“</div></div>
 </div>
@@ -525,6 +548,61 @@ function startCatch(){
  collectionState.mouseTimer=setInterval(()=>{time--;if(time<=0){clearInterval(collectionState.mouseTimer);zone.innerHTML="";$("catchScore").textContent=`Mäuse: ${score} • Fertig! Massiv: ${score>7?"😸 MIAU! Du bist schnell!":"😹 MIAU! Ich muss noch üben!"}`;recordGame("Mäusejagd",score);maybeMeow()}else{spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`}},1000)
 }
 document.querySelectorAll(".game-tile").forEach(b=>b.onclick=()=>renderGame(b.dataset.game));renderGame("cups");
+
+/* --- Massiv Internet-Werkstatt: öffentliche Recherche + bewusst freigegebene Konten --- */
+const researchKey="massivResearch";
+let researchLog=JSON.parse(localStorage.getItem(researchKey)||"[]");
+function saveResearch(){localStorage.setItem(researchKey,JSON.stringify(researchLog.slice(-30)))}
+function addResearch(kind,query,url){
+  researchLog.push({at:Date.now(),kind,query,url});
+  saveResearch();
+  const box=$("researchResults");
+  if(box) box.innerHTML=researchLog.slice(-8).reverse().map(x =>
+    "🔗 <b>"+escapeHTML(x.kind)+"</b>: "+escapeHTML(x.query)+"<br><a href='"+x.url+"' target='_blank' rel='noopener'>Quelle öffnen ↗</a><br><br>"
+  ).join("");
+}
+function researchQuery(){
+  const q=$("researchInput")?.value.trim();
+  if(!q){reply("Miau… gib mir ein Thema. Dann suche ich mit dir nach Quellen. 🔎");return}
+  const web="https://www.google.com/search?q="+encodeURIComponent(q+" reliable sources");
+  const yt="https://www.youtube.com/results?search_query="+encodeURIComponent(q);
+  addResearch("Web-Recherche",q,web);
+  addResearch("YouTube",q,yt);
+  addMoment("Massiv hat eine Recherche zu „"+q+"“ vorbereitet.");
+  speak("Miau! Ich habe Quellen zu "+q+" für dich vorbereitet.");
+}
+$("researchBtn")?.addEventListener("click",researchQuery);
+$("webSearchBtn")?.addEventListener("click",()=>{
+ const q=$("researchInput")?.value.trim();
+ if(!q){reply("Miau… sag mir zuerst, wonach ich suchen soll.");return}
+ const url="https://www.google.com/search?q="+encodeURIComponent(q+" reliable sources");
+ addResearch("Web",q,url);window.open(url,"_blank","noopener");
+});
+$("youtubeSearchBtn")?.addEventListener("click",()=>{
+ const q=$("researchInput")?.value.trim();
+ if(!q){reply("Miau… welches Video oder Thema soll ich suchen?");return}
+ const url="https://www.youtube.com/results?search_query="+encodeURIComponent(q);
+ addResearch("YouTube",q,url);window.open(url,"_blank","noopener");
+});
+function renderConnections(){
+ const c=localStorage.getItem("massivConnections");
+ $("connectionStatus").textContent=c ? "Gespeicherte Freigaben: "+c+" – Massiv nutzt nur ausdrücklich erlaubte Bereiche." : "Noch keine Konten verbunden.";
+}
+$("youtubeConnect")?.addEventListener("click",()=>{
+ const clientId=prompt("Für die sichere YouTube-Verbindung braucht Massiv eine Google OAuth Client-ID für diese Web-App. Du kannst sie hier lokal hinterlegen. Keine Passwörter eingeben.");
+ if(!clientId)return;
+ localStorage.setItem("massivYoutubeClientId",clientId.trim());
+ localStorage.setItem("massivConnections","YouTube OAuth vorbereitet");
+ renderConnections();
+ addMoment("YouTube-Verbindung wurde vorbereitet.");
+ reply("Miau. YouTube ist für eine sichere OAuth-Verbindung vorbereitet. Ich greife erst nach deiner Google-Freigabe auf dein Konto zu.",false);
+});
+$("googleConnect")?.addEventListener("click",()=>{
+ reply("Google-Konten verbinde ich nicht über dein Passwort. Das wird später über Googles OAuth-Freigabe gemacht, damit du selbst festlegst, was Massiv sehen darf.",false);
+});
+$("researchInput")?.addEventListener("keydown",e=>{if(e.key==="Enter")researchQuery()});
+renderConnections();
+
 </script>
 </body>
 </html>
