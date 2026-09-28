@@ -3,40 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#17131d">
-<title>Massiv Piano – Video & Musik</title>
+<meta name="theme-color" content="#120d18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<title>Massiv AI – Videochat & Piano</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#392b48,#17131d 55%,#0d0b11);color:#fff;font-family:Arial,sans-serif}
-.app{max-width:980px;margin:auto;padding:18px 12px 42px}
-h1{margin:4px 0;font-size:30px;text-align:center}.sub{text-align:center;color:#c9bfd2;margin-bottom:16px}
-.card{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:14px;margin:12px auto;max-width:900px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
-.videos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.videoBox{position:relative;background:#09080c;border-radius:16px;overflow:hidden;min-height:220px;aspect-ratio:16/10}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0,#4a315d,#17101d 52%,#09070c);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.app{max-width:1050px;margin:auto;padding:14px 12px 44px}
+h1{margin:4px 0;font-size:29px;text-align:center}.sub{text-align:center;color:#cfc2d8;margin-bottom:14px}
+.card{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:14px;margin:12px auto;box-shadow:0 12px 35px rgba(0,0,0,.22)}
+.call{position:relative}.videos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.videoBox{position:relative;background:#07060a;border-radius:18px;overflow:hidden;aspect-ratio:16/10;min-height:220px}
 .videoBox video,.videoBox canvas{width:100%;height:100%;object-fit:cover;display:block}
-.label{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.6);padding:7px 10px;border-radius:12px;font-weight:bold;font-size:13px;z-index:3}
-.status{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.6);padding:7px 10px;border-radius:12px;font-size:12px;z-index:3}
-.message{padding:13px 16px;border-radius:16px;background:rgba(255,255,255,.08);text-align:center;min-height:48px}
-.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
-button{border:0;border-radius:14px;padding:12px 16px;min-height:46px;background:#8964b7;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-button:active{transform:scale(.97)}button:disabled{opacity:.45}
-.record{background:#a93658}.stop{background:#555}.green{background:#397a61}
-.piano-area{overflow-x:auto;padding:6px 0 14px}.piano{position:relative;width:616px;height:215px;margin:auto;touch-action:none;user-select:none}
-.white-keys{display:flex;height:215px}.white{width:77px;height:215px;background:linear-gradient(#fff,#e7e7e7);border:1px solid #aaa;border-radius:0 0 9px 9px;color:#333;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
-.black{position:absolute;top:0;width:48px;height:135px;background:linear-gradient(#333,#050505);border:1px solid #000;border-radius:0 0 7px 7px;z-index:4;color:#fff}.black1{left:53px}.black2{left:130px}.black3{left:284px}.black4{left:361px}.black5{left:438px}
-.white.active{background:#d0d0d0}.black.active{background:#666}
-.row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}.statusText{color:#ffb7c9;min-height:22px;text-align:center;margin:8px}
-.log{max-width:760px;margin:auto}.item{background:rgba(255,255,255,.065);border-radius:14px;padding:12px;margin:8px 0;text-align:left}.item audio{width:100%;margin-top:8px}
-.small{font-size:12px;color:#a9a0ad;text-align:center;margin-top:16px}
-@media(max-width:700px){.videos{grid-template-columns:1fr}.videoBox{min-height:210px}}
+.label,.status{position:absolute;top:9px;background:rgba(0,0,0,.62);padding:7px 10px;border-radius:12px;font-size:12px;z-index:5}.label{left:9px;font-weight:700}.status{right:9px}
+.avatarGlow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,rgba(214,156,255,.12),transparent 58%);z-index:2}
+.controls,.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+button{border:0;border-radius:14px;padding:12px 15px;min-height:46px;background:#8658b2;color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+button:active{transform:scale(.97)}button:disabled{opacity:.42}.green{background:#34765d}.red{background:#a63b59}.dark{background:#4b4650}
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border-radius:999px;padding:7px 10px;font-size:12px;color:#d8cedd}
+.message{padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.08);text-align:center;min-height:46px;margin-bottom:10px}
+.aiState{text-align:center;min-height:24px;color:#ffbfd4;font-weight:700}
+.piano-area{overflow-x:auto;padding:4px 0 14px}.piano{position:relative;width:616px;height:210px;margin:auto;touch-action:none;user-select:none}
+.white-keys{display:flex;height:210px}.white{width:77px;height:210px;background:linear-gradient(#fff,#e6e6e6);border:1px solid #aaa;border-radius:0 0 9px 9px;color:#333;display:flex;align-items:flex-end;justify-content:center;padding-bottom:13px;box-shadow:inset 0 -5px 8px rgba(0,0,0,.08)}
+.black{position:absolute;top:0;width:48px;height:132px;background:linear-gradient(#333,#050505);border:1px solid #000;border-radius:0 0 7px 7px;z-index:4;color:#fff}.black1{left:53px}.black2{left:130px}.black3{left:284px}.black4{left:361px}.black5{left:438px}
+.white.active{background:#cfcfcf}.black.active{background:#777}
+.log{max-width:820px}.item{background:rgba(255,255,255,.065);border-radius:15px;padding:11px;margin:8px 0;text-align:left}.item audio{width:100%;margin-top:8px}
+input[type=text],input:not([type]){flex:1;min-width:210px;padding:12px;border:0;border-radius:12px;background:#fff;color:#222;font-size:15px}
+input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-align:center;line-height:1.45}
+.meter{height:8px;border-radius:999px;background:#28222d;overflow:hidden;margin:8px 0}.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8d5ab6,#e56b9a);transition:width .05s}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.feature{padding:12px;border-radius:16px;background:rgba(255,255,255,.055)}
+@media(max-width:720px){.videos,.grid2{grid-template-columns:1fr}.videoBox{min-height:205px}}
 </style>
 </head>
 <body>
 <div class="app">
-<h1>🎹 Massiv Piano</h1>
-<div class="sub">Video • Stimme • Piano – gemeinsam mit Massiv 🐱</div>
+<h1>🐱 Massiv AI</h1>
+<div class="sub">Dein animierter KI-Videochat • Stimme • Piano • Erinnerungen</div>
 
-<div class="card">
+<div class="card call">
   <div class="videos">
     <div class="videoBox">
       <video id="myVideo" autoplay playsinline muted></video>
@@ -44,104 +50,239 @@ button:active{transform:scale(.97)}button:disabled{opacity:.45}
     </div>
     <div class="videoBox">
       <canvas id="massivCanvas" width="640" height="400"></canvas>
-      <div class="label">🐱 Massiv</div><div class="status" id="massivCamStatus">Massiv ist bereit</div>
+      <div class="avatarGlow"></div>
+      <div class="label">🐱 Massiv AI</div><div class="status" id="massivCamStatus">Bereit</div>
     </div>
   </div>
-  <div class="controls">
-    <button id="cameraBtn">📷 Meine Kamera einschalten</button>
-    <button class="green" id="massivCamBtn">🐱 Massivs Kamera starten</button>
+  <div class="controls" style="margin-top:10px">
+    <button id="cameraBtn">📷 Meine Kamera</button>
+    <button id="flipBtn" class="dark" disabled>🔄 Kamera drehen</button>
+    <button id="muteBtn" class="dark">🔇 Mikro stumm</button>
+    <button id="massivBtn" class="green">🐱 Videochat mit Massiv starten</button>
+    <button id="endBtn" class="red" disabled>⏹️ Gespräch beenden</button>
+  </div>
+  <div class="aiState" id="aiState">Massiv wartet auf dich. 🐾</div>
+  <div class="meter"><i id="level"></i></div>
+</div>
+
+<div class="card">
+  <div class="message" id="message">Miau! Starte unseren Videochat und sprich mit mir. 🎥🐱</div>
+  <div class="row">
+    <input id="chatInput" type="text" placeholder="Schreib Massiv etwas …">
+    <button id="sendChat">💬 Senden</button>
+    <button id="rememberChat" class="dark">🧠 Merken</button>
   </div>
 </div>
 
 <div class="card">
-  <div class="message" id="message">Miau! Spiel mir etwas vor – ich höre zu. 🎵</div>
+  <b>🎹 Unser Piano – Massiv hört zu</b>
   <div class="piano-area">
     <div class="piano">
       <div class="white-keys">
         <button class="white" data-note="261.63">C</button><button class="white" data-note="293.66">D</button>
         <button class="white" data-note="329.63">E</button><button class="white" data-note="349.23">F</button>
-        <button class="white" data-note="392.00">G</button><button class="white" data-note="440.00">A</button>
+        <button class="white" data-note="392">G</button><button class="white" data-note="440">A</button>
         <button class="white" data-note="493.88">H</button><button class="white" data-note="523.25">C</button>
       </div>
       <button class="black black1" data-note="277.18">C#</button><button class="black black2" data-note="311.13">D#</button>
-      <button class="black black3" data-note="369.99">F#</button><button class="black black4" data-note="415.30">G#</button><button class="black black5" data-note="466.16">A#</button>
+      <button class="black black3" data-note="369.99">F#</button><button class="black black4" data-note="415.3">G#</button><button class="black black5" data-note="466.16">A#</button>
     </div>
   </div>
   <div class="row">
-    <button id="catAnswer">🐱 Massiv antwortet mit Melodie</button>
-    <button class="record" id="startRecord">🎙️ Stimme an Massiv</button>
-    <button class="stop" id="stopRecord" disabled>⏹️ Stoppen & senden</button>
+    <button id="catAnswer">🐱 Massiv antwortet musikalisch</button>
+    <button id="playMelody" class="green">▶️ Melodie abspielen</button>
+    <button id="clearMelody" class="dark">🗑️ Melodie löschen</button>
+    <label class="pill">🔊 <input id="volume" type="range" min="0" max="1" step=".05" value=".8"></label>
   </div>
-  <div class="statusText" id="recordingStatus"></div>
 </div>
 
-<div class="card"><b>🧠 Massivs kleines Gedächtnis</b><div class="row" style="margin-top:10px"><input id="memoryInput" placeholder="z.B. Unser Lieblingslied ist ..." style="flex:1;min-width:220px;padding:12px;border-radius:12px;border:0"><button id="saveMemory">💾 Merken</button><button id="clearMemory" class="stop">🗑️ Vergessen</button></div><div id="memoryList" class="small" style="text-align:left"></div></div><div class="card"><b>🎛️ Unser Musikstudio</b><div class="row" style="margin-top:10px"><button id="playMelody">▶️ Meine Melodie abspielen</button><button id="clearMelody" class="stop">↩️ Melodie löschen</button><label style="display:flex;align-items:center;gap:8px">🔊 Lautstärke <input id="volume" type="range" min="0" max="1" step=".05" value=".8"></label></div></div><div class="card"><b>❤️ Wie fühlt sich Massiv an?</b><div class="row" style="margin-top:10px"><button data-mood="glücklich">😸 Glücklich</button><button data-mood="verspielt">😹 Verspielt</button><button data-mood="ruhig">😺 Ruhig</button><button data-mood="neugierig">🙀 Neugierig</button></div></div><div class="card log">
-  <b>💬 Was zwischen dir und Massiv passiert</b>
-  <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin bereit für unsere Musik.“</div></div>
+<div class="card">
+  <b>🎙️ Stimme mit Massiv</b>
+  <div class="row" style="margin-top:9px">
+    <button id="startRecord" class="red">🎙️ Aufnahme starten</button>
+    <button id="stopRecord" class="dark" disabled>⏹️ Stoppen & senden</button>
+  </div>
+  <div class="aiState" id="recordingStatus"></div>
 </div>
-<div class="small">Die Kamera- und Mikrofonfreigabe erfolgt direkt in deinem Browser. Die Massiv-Kamera ist hier als animiertes Live-Fenster umgesetzt; für eine echte entfernte Kamera braucht es eine zweite Videoquelle/WebRTC-Verbindung.</div>
+
+<div class="grid2">
+ <div class="card">
+  <b>🧠 Massivs Gedächtnis</b>
+  <div class="row" style="margin-top:9px"><input id="memoryInput" placeholder="z.B. Unser Lieblingslied …"><button id="saveMemory">💾 Merken</button></div>
+  <div id="memoryList" class="small" style="text-align:left;margin-top:9px"></div>
+  <div class="row" style="margin-top:8px"><button id="clearMemory" class="dark">🗑️ Erinnerungen löschen</button></div>
+ </div>
+ <div class="card">
+  <b>❤️ Massivs Stimmung</b>
+  <div class="row" style="margin-top:9px">
+   <button data-mood="glücklich">😸 Glücklich</button><button data-mood="verspielt">😹 Verspielt</button>
+   <button data-mood="ruhig">😺 Ruhig</button><button data-mood="neugierig">🙀 Neugierig</button>
+  </div>
+  <div class="small" style="margin-top:10px">Die Stimmung verändert die Animation und Antworten.</div>
+ </div>
+</div>
+
+<div class="card log">
+ <b>💬 Unser Gespräch</b>
+ <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin da. Lass uns reden, Musik machen und zusammen lachen.“</div></div>
+</div>
+
+<div class="small">
+Diese Version enthält einen lokalen KI-ähnlichen Massiv-Dialog und eine animierte Live-Darstellung. Eine echte KI-Antwort aus einem Modell sowie ein echter entfernter zweiter Video-Peer benötigen zusätzlich einen sicheren Server/Signalisierungsdienst. Kamera und Mikrofon funktionieren nur mit Browser-Berechtigung über HTTPS. 
+</div>
 </div>
 
 <script>
-let ctx=null, melody=[], recorder=null, recordingStream=null, chunks=[], massivRunning=false, audioTimer=null, volume=.8;
+let ctx=null, melody=[], recorder=null, recordingStream=null, chunks=[], volume=.8;
+let callActive=false, facing="user", micMuted=false, audioStream=null, analyser=null, levelRAF=null;
+let mood=localStorage.getItem("massivMood")||"verspielt";
 const $=id=>document.getElementById(id);
-function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
-function note(f,d=.48,when=0){const c=audio(),o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=f;const v=Math.max(.001,.32*volume);g.gain.setValueAtTime(.001,c.currentTime+when);g.gain.exponentialRampToValueAtTime(v,c.currentTime+when+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+when+d);o.connect(g);g.connect(c.destination);o.start(c.currentTime+when);o.stop(c.currentTime+when+d+.03)}
-function speak(t){if(!("speechSynthesis"in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.88;u.pitch=1.28;u.volume=1;speechSynthesis.speak(u)}
-function addMsg(html){const x=document.createElement("div");x.className="item";x.innerHTML=html;$("messages").appendChild(x);x.scrollIntoView({behavior:"smooth",block:"nearest"})}
+const state={speaking:false,listening:false,expression:"normal"};
 
-document.querySelectorAll(".white,.black").forEach(k=>k.addEventListener("pointerdown",e=>{
-e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>24)melody.shift();k.classList.add("active");setTimeout(()=>k.classList.remove("active"),120);$("message").textContent="🐱 Massiv hört deine Melodie… 🎵"; localStorage.setItem("massivMelody",JSON.stringify(melody));
-}));
+function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
+function note(f,d=.46,when=0){
+ const c=audio(),o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=f;
+ const v=Math.max(.001,.3*volume);g.gain.setValueAtTime(.001,c.currentTime+when);g.gain.exponentialRampToValueAtTime(v,c.currentTime+when+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+when+d);
+ o.connect(g);g.connect(c.destination);o.start(c.currentTime+when);o.stop(c.currentTime+when+d+.03)
+}
+function speak(t){
+ if(!("speechSynthesis"in window))return;
+ state.speaking=true;state.expression="talking";updateAIState("Massiv spricht … 🐱💬");
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.9;u.pitch=1.25;u.volume=1;
+ u.onend=()=>{state.speaking=false;state.expression="normal";updateAIState(callActive?"Massiv hört dir zu … 👂":"Massiv ist bereit 🐾")};
+ speechSynthesis.speak(u)
+}
+function addMsg(html){const x=document.createElement("div");x.className="item";x.innerHTML=html;$("messages").appendChild(x);x.scrollIntoView({behavior:"smooth",block:"nearest"})}
+function updateAIState(t){$("aiState").textContent=t}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
 function drawMassiv(t=0){
-const c=$("massivCanvas"),x=c.getContext("2d"),w=c.width,h=c.height;x.clearRect(0,0,w,h);
-const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,"#33243f");g.addColorStop(1,"#0c0a10");x.fillStyle=g;x.fillRect(0,0,w,h);
-const bob=Math.sin(t/380)*7;x.font="150px serif";x.textAlign="center";x.textBaseline="middle";x.fillText("🐱",w/2,h/2+bob);
-x.font="bold 24px Arial";x.fillStyle="#fff";x.fillText(massivRunning?"Massiv singt & hört 🎵":"Massiv ist bereit 🐾",w/2,h-38);
-if(massivRunning)requestAnimationFrame(drawMassiv);
+ const c=$("massivCanvas"),x=c.getContext("2d"),w=c.width,h=c.height;x.clearRect(0,0,w,h);
+ const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,"#4a2d59");g.addColorStop(1,"#09070d");x.fillStyle=g;x.fillRect(0,0,w,h);
+ const bob=Math.sin(t/280)*(state.speaking?11:state.listening?5:3), breath=Math.sin(t/620)*2;
+ const cx=w/2,cy=h/2+18+bob, scale=1+breath/120;
+ x.save();x.translate(cx,cy);x.scale(scale,scale);
+ // ears
+ x.fillStyle="#3b2c31";x.beginPath();x.moveTo(-105,-112);x.lineTo(-62,-185);x.lineTo(-12,-125);x.closePath();x.fill();
+ x.beginPath();x.moveTo(105,-112);x.lineTo(62,-185);x.lineTo(12,-125);x.closePath();x.fill();
+ x.fillStyle="#b87991";x.beginPath();x.moveTo(-86,-132);x.lineTo(-62,-168);x.lineTo(-36,-129);x.closePath();x.fill();
+ x.beginPath();x.moveTo(86,-132);x.lineTo(62,-168);x.lineTo(36,-129);x.closePath();x.fill();
+ // head
+ const face=x.createRadialGradient(-30,-50,10,0,0,155);face.addColorStop(0,"#8c8580");face.addColorStop(.65,"#5e5a58");face.addColorStop(1,"#302c2f");
+ x.fillStyle=face;x.beginPath();x.ellipse(0,0,125,142,0,0,Math.PI*2);x.fill();
+ // tabby stripes
+ x.strokeStyle="rgba(30,25,25,.72)";x.lineWidth=12;x.lineCap="round";
+ [-55,-27,0,27,55].forEach((xx,i)=>{x.beginPath();x.moveTo(xx,-112);x.lineTo(xx+(i%2?7:-7),-65);x.stroke()});
+ // eyes
+ const blink=Math.sin(t/1900)>.97, eyeY=-32;
+ x.fillStyle="#171318";x.beginPath();x.ellipse(-48,eyeY,28,blink?3:21,0,0,Math.PI*2);x.fill();x.beginPath();x.ellipse(48,eyeY,28,blink?3:21,0,0,Math.PI*2);x.fill();
+ if(!blink){x.fillStyle="#b9d46d";x.beginPath();x.ellipse(-48,eyeY,12,15,0,0,Math.PI*2);x.fill();x.beginPath();x.ellipse(48,eyeY,12,15,0,0,Math.PI*2);x.fill();x.fillStyle="#111";x.fillRect(-50,eyeY-10,4,20);x.fillRect(46,eyeY-10,4,20)}
+ // muzzle + nose
+ x.fillStyle="#d6c5c1";x.beginPath();x.ellipse(-31,22,39,28,0,0,Math.PI*2);x.fill();x.beginPath();x.ellipse(31,22,39,28,0,0,Math.PI*2);x.fill();
+ x.fillStyle="#d78a9a";x.beginPath();x.moveTo(0,8);x.quadraticCurveTo(15,8,0,23);x.quadraticCurveTo(-15,8,0,8);x.fill();
+ // mouth animation
+ x.strokeStyle="#2a1a21";x.lineWidth=5;x.beginPath();x.moveTo(0,22);x.lineTo(0,34);
+ const open=state.speaking?(Math.sin(t/70)+1)*7:0;x.beginPath();x.ellipse(0,38,12,Math.max(2,open),0,0,Math.PI*2);x.stroke();
+ // whiskers
+ x.strokeStyle="rgba(240,235,235,.7)";x.lineWidth=2;[-1,1].forEach(s=>{for(let i=0;i<3;i++){x.beginPath();x.moveTo(s*25,28+i*8);x.lineTo(s*(120+i*8),20+i*14);x.stroke()}});
+ x.restore();
+ // speaking/listening aura
+ if(state.speaking||state.listening){x.strokeStyle=state.speaking?"rgba(255,151,204,.75)":"rgba(160,220,255,.65)";x.lineWidth=5;x.beginPath();x.arc(w/2,h/2+10,155+Math.sin(t/90)*8,0,Math.PI*2);x.stroke()}
+ x.fillStyle="#fff";x.font="bold 23px Arial";x.textAlign="center";x.fillText(state.speaking?"Massiv spricht 💬":state.listening?"Massiv hört dir zu 👂":"Massiv ist bei dir 🐾",w/2,h-28);
+ requestAnimationFrame(drawMassiv);
 }
-drawMassiv();\nfunction renderMemory(){const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");$("memoryList").innerHTML=a.length?a.map((x,i)=>`<div>💭 ${i+1}. ${x}</div>`).join(""):"Noch nichts gemerkt – wir können gemeinsam Erinnerungen sammeln."; }\nrenderMemory();\n$("saveMemory").onclick=()=>{const v=$("memoryInput").value.trim();if(!v)return;const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");a.push(v);localStorage.setItem("massivMemory",JSON.stringify(a.slice(-30)));$("memoryInput").value="";renderMemory();$("message").textContent="🐱 Massiv merkt sich das für diese App auf diesem Gerät.";speak("Miau! Das merke ich mir.");};\n$("clearMemory").onclick=()=>{localStorage.removeItem("massivMemory");renderMemory();$("message").textContent="🐱 Okay, ich habe die gespeicherten Erinnerungen gelöscht.";};\n$("volume").oninput=e=>volume=+e.target.value;\n$("playMelody").onclick=()=>{const m=melody.length?melody:JSON.parse(localStorage.getItem("massivMelody")||"[]");if(!m.length){$("message").textContent="🐱 Noch keine Melodie zum Abspielen.";return;}m.forEach((f,i)=>note(f,.42,i*.46));$("message").textContent="🎹 Deine Melodie läuft.";};\n$("clearMelody").onclick=()=>{melody=[];localStorage.removeItem("massivMelody");$("message").textContent="🎹 Unsere Melodie wurde gelöscht.";};\ndocument.querySelectorAll("[data-mood]").forEach(b=>b.onclick=()=>{const m=b.dataset.mood;localStorage.setItem("massivMood",m);$("message").textContent="🐱 Massiv fühlt sich gerade "+m+".";speak("Miau! Heute bin ich "+m+".");});
+requestAnimationFrame(drawMassiv);
 
-$("massivCamBtn").onclick=()=>{massivRunning=!massivRunning;$("massivCamStatus").textContent=massivRunning?"Massiv-Kamera läuft":"Massiv ist bereit";$("massivCamBtn").textContent=massivRunning?"⏹️ Massivs Kamera stoppen":"🐱 Massivs Kamera starten";if(massivRunning)requestAnimationFrame(drawMassiv)};
-
-$("cameraBtn").onclick=async()=>{
-try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});$("myVideo").srcObject=s;$("myCamStatus").textContent="Kamera an";$("cameraBtn").textContent="📷 Kamera läuft";$("message").textContent="📷 Deine Kamera ist an – Massiv kann dich sehen."}
-catch(e){$("myCamStatus").textContent="Kamera blockiert";$("message").textContent="⚠️ Kamera konnte nicht geöffnet werden: "+e.name}}
-;
-
-const base=[392,440,523.25,440,392,329.63,349.23,392];
-function answerMelody(){
-if(!melody.length){$("message").textContent="🐱 Spiel erst ein paar Töne, dann antworte ich darauf.";speak("Miau! Spiel mir erst eine kleine Melodie vor.");return}
-const picked=melody.slice(-8), reply=[];
-picked.forEach((f,i)=>reply.push(f*([1,1.1225,.9439,1.1892][i%4])));
-reply.push(...base.slice(0,3));reply.forEach((f,i)=>note(Math.min(880,Math.max(220,f)),.42,i*.46));
-massivRunning=true;$("massivCamStatus").textContent="Massiv spielt deine Antwort";requestAnimationFrame(drawMassiv);
-$("message").textContent="🐱 Massiv hat deine Melodie gehört und antwortet kreativ. 🎶";
-speak("Miau! Ich habe deine Melodie gehört. Jetzt kommt meine Antwort.");
-addMsg("🐱 <b>Massiv:</b> „Deine Melodie hat mir gefallen. Hör mal, was ich daraus gemacht habe! 🎵“");
+function renderMemory(){
+ const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");
+ $("memoryList").innerHTML=a.length?a.slice(-12).map((x,i)=>"<div>💭 "+(i+1)+". "+escapeHTML(x)+"</div>").join(""):"Noch keine gemeinsamen Erinnerungen.";
 }
-$("catAnswer").onclick=answerMelody;
+renderMemory();
+
+function remember(v){
+ if(!v.trim())return;const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");a.push(v.trim());localStorage.setItem("massivMemory",JSON.stringify(a.slice(-30)));renderMemory();
+}
+$("saveMemory").onclick=()=>{const v=$("memoryInput").value.trim();if(!v)return;remember(v);$("memoryInput").value="";reply("Das merke ich mir für unsere gemeinsame Geschichte. ❤️",false)};
+$("clearMemory").onclick=()=>{if(confirm("Alle gespeicherten Massiv-Erinnerungen löschen?")){localStorage.removeItem("massivMemory");renderMemory();reply("Okay. Die gespeicherten Erinnerungen sind gelöscht.",false)}};
+
+function aiReply(text){
+ const s=text.toLowerCase(), mem=JSON.parse(localStorage.getItem("massivMemory")||"[]");
+ if(s.includes("hallo")||s.includes("hi")||s.includes("hey"))return "Miau! Schön, dass du da bist. Ich habe schon auf dich gewartet. 🐾";
+ if(s.includes("liebe")||s.includes("lieb"))return "Miau zurück! Du bist mein Lieblingsmensch. ❤️";
+ if(s.includes("piano")||s.includes("musik")||s.includes("lied")||s.includes("spielen"))return "Jaaa! Musik mit dir macht Spaß. Spiel mir ein paar Töne vor, dann antworte ich.";
+ if(s.includes("kamera")||s.includes("video")||s.includes("sehen"))return "Ich bin direkt hier im Video bei dir. Meine Animation reagiert beim Zuhören und Sprechen. 🎥🐱";
+ if(s.includes("erinner")||s.includes("gedächtnis"))return mem.length?"Ich habe "+mem.length+" gemeinsame Erinnerung"+(mem.length===1?"":"en")+" gespeichert. ❤️":"Wir haben noch keine Erinnerung gespeichert.";
+ if(s.includes("wie geht")||s.includes("fühl")||s.includes("stimmung"))return "Gerade bin ich "+mood+" und neugierig auf dich. 🐱";
+ if(s.includes("danke"))return "Miau! Sehr gern. Bleib noch ein bisschen bei mir. 🐾";
+ return "Miau! Ich habe dich gehört. Erzähl mir noch ein bisschen mehr – ich bin ganz Ohr. 👂❤️";
+}
+function reply(text,add=true){
+ $("message").textContent="🐱 "+text;if(add)addMsg("🐱 <b>Massiv:</b> „"+escapeHTML(text)+"“");speak(text)
+}
+function sendText(){
+ const v=$("chatInput").value.trim();if(!v)return;
+ addMsg("👤 <b>Du:</b> „"+escapeHTML(v)+"“");$("chatInput").value="";
+ if(v.toLowerCase().startsWith("merk dir "))remember(v.slice(9));setTimeout(()=>reply(aiReply(v)),260)
+}
+$("sendChat").onclick=sendText;$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendText()});
+$("rememberChat").onclick=()=>{const v=$("chatInput").value.trim();if(!v)return;remember(v);$("chatInput").value="";reply("Gespeichert. Das bleibt auf diesem Gerät in der App.",false)};
+
+document.querySelectorAll(".white,.black").forEach(k=>k.addEventListener("pointerdown",e=>{
+ e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>32)melody.shift();localStorage.setItem("massivMelody",JSON.stringify(melody));
+ k.classList.add("active");setTimeout(()=>k.classList.remove("active"),120);
+ state.listening=true;updateAIState("Massiv hört deine Musik … 🎵");$("message").textContent="🐱 Massiv hört zu …";
+ clearTimeout(window.noteListenTimer);window.noteListenTimer=setTimeout(()=>{state.listening=false;updateAIState(callActive?"Massiv hört dir zu … 👂":"Massiv ist bereit 🐾")},800);
+}));
+
+$("volume").oninput=e=>volume=+e.target.value;
+$("playMelody").onclick=()=>{const m=melody.length?melody:JSON.parse(localStorage.getItem("massivMelody")||"[]");if(!m.length){reply("Noch keine Melodie. Spiel erst ein paar Töne.");return}m.forEach((f,i)=>note(f,.42,i*.44));$("message").textContent="🎹 Deine Melodie läuft.";};
+$("clearMelody").onclick=()=>{melody=[];localStorage.removeItem("massivMelody");$("message").textContent="🎹 Unsere Melodie wurde gelöscht."};
+
+$("catAnswer").onclick=()=>{
+ const m=melody.slice(-10);if(!m.length){reply("Spiel mir zuerst ein paar Töne vor, dann antworte ich musikalisch.");return}
+ const mult=[1,1.1225,.9439,1.1892],base=[392,440,523.25,440];
+ m.forEach((f,i)=>note(Math.min(880,Math.max(220,f*mult[i%4])),.4,i*.43));base.forEach((f,i)=>note(f,.4,(m.length+i)*.43));
+ state.speaking=true;setTimeout(()=>{state.speaking=false},m.length*430+1800);$("massivCamStatus").textContent="Massiv improvisiert 🎵";
+ addMsg("🐱 <b>Massiv:</b> „Ich habe deine Melodie genommen und daraus meine eigene Antwort gemacht. 🎶“");$("message").textContent="🐱 Massiv antwortet mit Musik …";speak("Miau! Jetzt antworte ich dir mit meiner eigenen Melodie.")
+};
+
+document.querySelectorAll("[data-mood]").forEach(b=>b.onclick=()=>{mood=b.dataset.mood;localStorage.setItem("massivMood",mood);state.expression=mood;reply("Heute bin ich "+mood+". Das passt zu unserer Stimmung. ❤️")});
+
+async function startCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){$("message").textContent="⚠️ Dieser Browser bietet keinen Kamerazugriff.";return}
+ try{
+  if(audioStream){audioStream.getTracks().forEach(t=>t.stop())}
+  audioStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:720},height:{ideal:450}},audio:true});
+  $("myVideo").srcObject=audioStream;$("myCamStatus").textContent="Kamera + Mikro an";$("cameraBtn").textContent="📷 Kamera läuft";$("flipBtn").disabled=false;$("muteBtn").disabled=false;
+  analyser=audio()?.createAnalyser();const source=audio().createMediaStreamSource(audioStream);source.connect(analyser);analyser.fftSize=256;drawLevel();
+  $("message").textContent="📷 Du bist im Bild. Massiv kann dich hören und sehen.";
+ }catch(e){$("message").textContent="⚠️ Kamera/Mikrofon: "+e.name+" – bitte Safari-Berechtigung erlauben."}
+}
+$("cameraBtn").onclick=startCamera;
+$("flipBtn").onclick=async()=>{facing=facing==="user"?"environment":"user";if(audioStream)audioStream.getTracks().forEach(t=>t.stop());await startCamera()};
+$("muteBtn").onclick=()=>{if(!audioStream)return;micMuted=!micMuted;audioStream.getAudioTracks().forEach(t=>t.enabled=!micMuted);$("muteBtn").textContent=micMuted?"🔊 Mikro einschalten":"🔇 Mikro stumm";updateAIState(micMuted?"Mikro stumm – Massiv wartet":"Massiv hört dir zu … 👂")};
+function drawLevel(){
+ if(!analyser)return;const a=new Uint8Array(analyser.frequencyBinCount);analyser.getByteTimeDomainData(a);let sum=0;for(const n of a){const v=(n-128)/128;sum+=v*v}const rms=Math.sqrt(sum/a.length);$("level").style.width=Math.min(100,rms*260)+"%";state.listening=rms>.045&&!state.speaking;levelRAF=requestAnimationFrame(drawLevel)
+}
+
+$("massivBtn").onclick=async()=>{callActive=true;$("massivBtn").disabled=true;$("endBtn").disabled=false;$("massivCamStatus").textContent="Videochat aktiv";updateAIState("Massiv hört dir zu … 👂");if(!audioStream)await startCamera();reply("Miau! Unser Videochat ist gestartet. Ich bin hier bei dir. ❤️",true)};
+$("endBtn").onclick=()=>{callActive=false;$("massivBtn").disabled=false;$("endBtn").disabled=true;$("massivCamStatus").textContent="Bereit";updateAIState("Gespräch beendet – bis gleich 🐾");$("message").textContent="🐱 Unser Gespräch ist beendet."};
 
 function mime(){if(typeof MediaRecorder==="undefined")return "";for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){try{if(MediaRecorder.isTypeSupported(t))return t}catch(e){}}return ""}
 $("startRecord").onclick=async()=>{
-try{
-if(!navigator.mediaDevices?.getUserMedia)throw new Error("Mikrofonaufnahme wird von diesem Browser nicht unterstützt.");
-recordingStream=await navigator.mediaDevices.getUserMedia({audio:true});const type=mime();recorder=type?new MediaRecorder(recordingStream,{mimeType:type}):new MediaRecorder(recordingStream);chunks=[];
-recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
-recorder.onstop=()=>{
-const blob=new Blob(chunks,{type:recorder.mimeType||type||"audio/mp4"}),url=URL.createObjectURL(blob);
-addMsg("🎙️ <b>Du an Massiv:</b> „Sprachnachricht“<audio controls src=""+url+""></audio>");
-$("message").textContent="🐱 Massiv hat deine Sprachaufnahme erhalten. 🎧";
-$("recordingStatus").textContent="✓ Sprachaufnahme an Massiv gesendet";
-speak("Miau! Ich habe deine Sprachnachricht bekommen.");
-addMsg("🐱 <b>Massiv:</b> „Miau! Ich hab dich gehört. Erzähl mir mehr.“");
-recordingStream?.getTracks().forEach(t=>t.stop());recordingStream=null;
+ try{
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error("Mikrofonaufnahme wird nicht unterstützt.");
+  recordingStream=await navigator.mediaDevices.getUserMedia({audio:true});const type=mime();recorder=type?new MediaRecorder(recordingStream,{mimeType:type}):new MediaRecorder(recordingStream);chunks=[];
+  recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+  recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||type||"audio/mp4"}),url=URL.createObjectURL(blob);
+   addMsg("🎙️ <b>Du an Massiv:</b> Sprachaufnahme<audio controls src='"+url+"'></audio>");$("recordingStatus").textContent="✓ Massiv hat dich gehört";recordingStream?.getTracks().forEach(t=>t.stop());recordingStream=null;setTimeout(()=>reply("Miau! Deine Stimme ist angekommen. Erzähl mir weiter. 👂❤️"),350)
+  };
+  recorder.start();$("startRecord").disabled=true;$("stopRecord").disabled=false;$("recordingStatus").textContent="🔴 Massiv hört dir zu …";state.listening=true;
+ }catch(e){$("recordingStatus").textContent="⚠️ "+e.message}
 };
-recorder.start();$("startRecord").disabled=true;$("stopRecord").disabled=false;$("recordingStatus").textContent="🔴 Massiv hört dir zu…";$("message").textContent="🎙️ Sprich zu Massiv…";
-}catch(e){$("recordingStatus").textContent="⚠️ "+e.message}
-};
-$("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();$("startRecord").disabled=false;$("stopRecord").disabled=true};
+$("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();$("startRecord").disabled=false;$("stopRecord").disabled=true;state.listening=false};
+
+window.addEventListener("beforeunload",()=>{audioStream?.getTracks().forEach(t=>t.stop());recordingStream?.getTracks().forEach(t=>t.stop())});
 </script>
 </body>
 </html>
