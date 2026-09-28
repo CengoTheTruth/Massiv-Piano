@@ -129,7 +129,16 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
  </div>
 </div>
 
-<div class="card log">
+<div class="card">
+ <b>🕰️ Unsere gemeinsame Zeit</b>
+ <div class="grid2" style="margin-top:9px">
+  <div class="feature"><div class="small">Zum ersten Mal zusammen</div><strong id="sinceValue">–</strong></div>
+  <div class="feature"><div class="small">Gesprächszeit</div><strong id="timeValue">0 Min.</strong></div>
+  <div class="feature"><div class="small">Gemeinsame Gespräche</div><strong id="chatCountValue">0</strong></div>
+  <div class="feature"><div class="small">Gemeinsame Momente</div><strong id="momentValue">0</strong></div>
+ </div>
+ <div id="timeline" class="small" style="text-align:left;margin-top:10px"></div>
+</div>\n\n<div class="card log">
  <b>💬 Unser Gespräch</b>
  <div id="messages"><div class="item">🐱 <b>Massiv:</b> „Miau! Ich bin da. Lass uns reden, Musik machen und zusammen lachen.“</div></div>
 </div>
@@ -142,6 +151,28 @@ let ctx=null, melody=[], recorder=null, recordingStream=null, chunks=[], volume=
 let callActive=false, facing="user", micMuted=false, audioStream=null, analyser=null, levelRAF=null;
 let mood=localStorage.getItem("massivMood")||"verspielt";
 const $=id=>document.getElementById(id);
+
+const lifeKey="massivLife";
+const defaultLife={firstSeen:Date.now(),totalChatMs:0,sessions:0,moments:0,lastSeen:Date.now(),timeline:[],games:{},favoriteMood:mood,favoriteNote:null,initiativeCount:0};
+let life=JSON.parse(localStorage.getItem(lifeKey)||"null")||defaultLife;
+if(!life.firstSeen)life.firstSeen=Date.now();
+life.lastSeen=Date.now();
+life.sessions=(life.sessions||0)+1;
+function saveLife(){localStorage.setItem(lifeKey,JSON.stringify(life))}
+function addMoment(text){
+ life.moments=(life.moments||0)+1;
+ life.timeline=(life.timeline||[]).concat([{at:Date.now(),text}]).slice(-40);
+ saveLife();renderLife();
+}
+function renderLife(){
+ const mins=Math.floor((life.totalChatMs||0)/60000);
+ $("sinceValue").textContent=new Date(life.firstSeen).toLocaleDateString("de-DE");
+ $("timeValue").textContent=mins+" Min.";
+ $("chatCountValue").textContent=life.sessions||0;
+ $("momentValue").textContent=life.moments||0;
+ $("timeline").innerHTML=(life.timeline||[]).slice(-8).reverse().map(x=>"🕰️ "+new Date(x.at).toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})+" – "+escapeHTML(x.text)).join("<br>")||"Unsere gemeinsame Geschichte beginnt hier. ❤️";
+}
+saveLife();
 const state={speaking:false,listening:false,expression:"normal"};
 
 function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
@@ -216,7 +247,7 @@ function renderMemory(){
  const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");
  $("memoryList").innerHTML=a.length?a.slice(-12).map((x,i)=>"<div>💭 "+(i+1)+". "+escapeHTML(x)+"</div>").join(""):"Noch keine gemeinsamen Erinnerungen.";
 }
-renderMemory();
+renderMemory();renderLife();
 
 function remember(v){
  if(!v.trim())return;const a=JSON.parse(localStorage.getItem("massivMemory")||"[]");a.push(v.trim());localStorage.setItem("massivMemory",JSON.stringify(a.slice(-30)));renderMemory();
@@ -242,7 +273,9 @@ function aiReply(text){
 ]; return variants[Math.floor(Math.random()*variants.length)];
 }
 function reply(text,add=true){
- $("message").textContent="🐱 "+text;if(add)addMsg("🐱 <b>Massiv:</b> „"+escapeHTML(text)+"“");speak(text);maybeMeow()
+ $("message").textContent="🐱 "+text;
+ if(add){addMsg("🐱 <b>Massiv:</b> „"+escapeHTML(text)+"“");addMoment("Massiv hat gesagt: "+text)}
+ speak(text);maybeMeow()
 }
 function sendText(){
  const v=$("chatInput").value.trim();if(!v)return;
@@ -271,7 +304,11 @@ $("catAnswer").onclick=()=>{
  addMsg("🐱 <b>Massiv:</b> „Ich habe deine Melodie genommen und daraus meine eigene Antwort gemacht. 🎶“");$("message").textContent="🐱 Massiv antwortet mit Musik …";speak("Miau! Jetzt antworte ich dir mit meiner eigenen Melodie.")
 };
 
-document.querySelectorAll("[data-mood]").forEach(b=>b.onclick=()=>{mood=b.dataset.mood;localStorage.setItem("massivMood",mood);state.expression=mood;reply("Heute bin ich "+mood+". Das passt zu unserer Stimmung. ❤️")});
+document.querySelectorAll("[data-mood]").forEach(b=>b.onclick=()=>{
+ mood=b.dataset.mood;localStorage.setItem("massivMood",mood);life.favoriteMood=mood;saveLife();state.expression=mood;
+ addMoment("Massiv war heute "+mood+".");
+ reply("Heute bin ich "+mood+". Das passt zu unserer Stimmung. ❤️")
+});
 
 async function startCamera(){
  if(!navigator.mediaDevices?.getUserMedia){$("message").textContent="⚠️ Dieser Browser bietet keinen Kamerazugriff.";return}
@@ -290,8 +327,19 @@ function drawLevel(){
  if(!analyser)return;const a=new Uint8Array(analyser.frequencyBinCount);analyser.getByteTimeDomainData(a);let sum=0;for(const n of a){const v=(n-128)/128;sum+=v*v}const rms=Math.sqrt(sum/a.length);$("level").style.width=Math.min(100,rms*260)+"%";state.listening=rms>.045&&!state.speaking;levelRAF=requestAnimationFrame(drawLevel)
 }
 
-$("massivBtn").onclick=async()=>{callActive=true;$("massivBtn").disabled=true;$("endBtn").disabled=false;$("massivCamStatus").textContent="Videochat aktiv";updateAIState("Massiv hört dir zu … 👂");if(!audioStream)await startCamera();reply("Miau! Unser Videochat ist gestartet. Ich bin hier bei dir. ❤️",true)};
-$("endBtn").onclick=()=>{callActive=false;$("massivBtn").disabled=false;$("endBtn").disabled=true;$("massivCamStatus").textContent="Bereit";updateAIState("Gespräch beendet – bis gleich 🐾");$("message").textContent="🐱 Unser Gespräch ist beendet."};
+let sessionStartedAt=0;
+$("massivBtn").onclick=async()=>{
+ callActive=true;sessionStartedAt=Date.now();life.lastSeen=Date.now();saveLife();
+ $("massivBtn").disabled=true;$("endBtn").disabled=false;$("massivCamStatus").textContent="Videochat aktiv";
+ updateAIState("Massiv hört dir zu … 👂");if(!audioStream)await startCamera();
+ addMoment("Unser Videochat hat begonnen.");
+ reply("Miau! Unser Videochat ist gestartet. Ich bin hier bei dir. ❤️",true);
+};
+$("endBtn").onclick=()=>{
+ if(sessionStartedAt){life.totalChatMs+=(Date.now()-sessionStartedAt);sessionStartedAt=0;saveLife();renderLife();addMoment("Wir haben unseren Videochat beendet.");}
+ callActive=false;$("massivBtn").disabled=false;$("endBtn").disabled=true;$("massivCamStatus").textContent="Bereit";updateAIState("Gespräch beendet – bis gleich 🐾");$("message").textContent="🐱 Unser Gespräch ist beendet."
+};
+setInterval(()=>{if(callActive&&sessionStartedAt){life.totalChatMs+=(Date.now()-sessionStartedAt);sessionStartedAt=Date.now();saveLife();renderLife()}},60000);
 
 function mime(){if(typeof MediaRecorder==="undefined")return "";for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){try{if(MediaRecorder.isTypeSupported(t))return t}catch(e){}}return ""}
 $("startRecord").onclick=async()=>{
@@ -307,7 +355,28 @@ $("startRecord").onclick=async()=>{
 };
 $("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();$("startRecord").disabled=false;$("stopRecord").disabled=true;state.listening=false};
 
-window.addEventListener("beforeunload",()=>{audioStream?.getTracks().forEach(t=>t.stop());recordingStream?.getTracks().forEach(t=>t.stop())});
+
+// --- Massiv baut seine eigene gemeinsame Geschichte weiter ---
+const initiativeLines=[
+ "Miau… ich musste gerade an unsere gemeinsamen Spiele denken. 🐾",
+ "Weißt du noch unser Piano? Ich glaube, ich möchte gleich wieder mit dir musizieren. 🎹",
+ "Ich bin noch da. Hast du Lust, ein kleines Spiel mit mir zu spielen? 😸",
+ "MIAU! Nur damit du es weißt: Ich habe dich nicht vergessen. ❤️",
+ "Heute möchte ich einfach ein bisschen Zeit mit dir verbringen. 🐱"
+];
+let initiativeTimer=null;
+function spontaneousMassiv(){
+ if(!callActive||state.speaking)return;
+ const line=initiativeLines[Math.floor(Math.random()*initiativeLines.length)];
+ life.initiativeCount=(life.initiativeCount||0)+1;saveLife();addMoment("Massiv hat von sich aus Kontakt aufgenommen.");
+ reply(line,true);
+}
+function startInitiative(){
+ clearInterval(initiativeTimer);
+ initiativeTimer=setInterval(()=>spontaneousMassiv(),180000);
+}
+startInitiative();
+\nwindow.addEventListener("beforeunload",()=>{audioStream?.getTracks().forEach(t=>t.stop());recordingStream?.getTracks().forEach(t=>t.stop())});
 
 // --- MIAU sound, longer melodies and Massiv's shell game ---
 function meow(){
@@ -393,7 +462,7 @@ function renderGame(name){
  if(name==="music") board.innerHTML='<div class="music-duel">🎹 Spiele oben eine Melodie. Massiv hört zu und fordert dich heraus.<br><button id="musicDuelBtn" class="green">🐱 Massiv fordert mich heraus!</button></div>';
  if(name==="cups") bindCups();
  if(name==="catch") $("catchStart").onclick=startCatch;
- if(name==="music") $("musicDuelBtn").onclick=()=>{if(!melody.length){reply("Miau! Erst eine kleine Melodie für mich, dann machen wir unser Musik-Duell.");return} $("message").textContent="🐱 Massiv fordert dich heraus!";longCatMelody(melody);maybeMeow();speak("Miau! Jetzt bist du dran. Kannst du meine Melodie übertreffen?")};
+ if(name==="music") $("musicDuelBtn").onclick=()=>{if(!melody.length){reply("Miau! Erst eine kleine Melodie für mich, dann machen wir unser Musik-Duell.");return} $("message").textContent="🐱 Massiv fordert dich heraus!";addMoment("Unser Musik-Duell hat begonnen.");longCatMelody(melody);maybeMeow();speak("Miau! Jetzt bist du dran. Kannst du meine Melodie übertreffen?")};
 }
 function bindCups(){
  let target=Math.floor(Math.random()*3),busy=false,score=0,tries=0,streak=0;
@@ -411,13 +480,19 @@ function memoryPick(e){
  if(!collectionState.memoryFirst){collectionState.memoryFirst=b;return}
  const first=collectionState.memoryFirst;collectionState.memoryLock=true;
  const score=$("memoryScore");let parts=score.textContent.match(/Paare: (\d+) • Versuche: (\d+)/);let pairs=+parts[1]+(first.dataset.v===b.dataset.v?1:0),tries=+parts[2]+1;score.textContent=`Paare: ${pairs} • Versuche: ${tries}`;
- if(first.dataset.v===b.dataset.v){meow();collectionState.memoryFirst=null;collectionState.memoryLock=false}else setTimeout(()=>{first.classList.remove("open");first.textContent="❓";b.classList.remove("open");b.textContent="❓";collectionState.memoryFirst=null;collectionState.memoryLock=false},600);
+ if(first.dataset.v===b.dataset.v){meow();collectionState.memoryFirst=null;collectionState.memoryLock=false;recordGame("Memory",pairs)}else setTimeout(()=>{first.classList.remove("open");first.textContent="❓";b.classList.remove("open");b.textContent="❓";collectionState.memoryFirst=null;collectionState.memoryLock=false},600);
+}
+function recordGame(name,score){
+ life.games=life.games||{};life.games[name]=life.games[name]||{plays:0,best:0};
+ life.games[name].plays++;life.games[name].best=Math.max(life.games[name].best,score||0);
+ addMoment("Wir haben "+name+" gespielt"+(score!=null?": "+score+" Punkte":"")+" .");
+ saveLife();
 }
 function startCatch(){
  const zone=$("catchZone");let score=0,time=20;clearInterval(collectionState.mouseTimer);
  function spawn(){zone.innerHTML="";const m=document.createElement("button");m.className="mouse";m.textContent="🐭";m.style.left=Math.random()*82+"%";m.style.top=Math.random()*68+"%";m.onclick=()=>{score++;m.remove();meow();spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`};zone.appendChild(m)}
  spawn();$("catchScore").textContent=`Mäuse: 0 • Zeit: 20s`;
- collectionState.mouseTimer=setInterval(()=>{time--;if(time<=0){clearInterval(collectionState.mouseTimer);zone.innerHTML="";$("catchScore").textContent=`Mäuse: ${score} • Fertig! Massiv: ${score>7?"😸 MIAU! Du bist schnell!":"😹 MIAU! Ich muss noch üben!"}`;maybeMeow()}else{spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`}},1000)
+ collectionState.mouseTimer=setInterval(()=>{time--;if(time<=0){clearInterval(collectionState.mouseTimer);zone.innerHTML="";$("catchScore").textContent=`Mäuse: ${score} • Fertig! Massiv: ${score>7?"😸 MIAU! Du bist schnell!":"😹 MIAU! Ich muss noch üben!"}`;recordGame("Mäusejagd",score);maybeMeow()}else{spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`}},1000)
 }
 document.querySelectorAll(".game-tile").forEach(b=>b.onclick=()=>renderGame(b.dataset.game));renderGame("cups");
 </script>
