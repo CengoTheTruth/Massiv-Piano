@@ -1,0 +1,9 @@
+{
+  "name":"Massiv AI – Videochat & Piano",
+  "short_name":"Massiv AI",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#120d18",
+  "theme_color":"#120d18",
+  "icons":[]
+}
