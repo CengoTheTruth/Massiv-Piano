@@ -35,6 +35,9 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
 .meter{height:8px;border-radius:999px;background:#28222d;overflow:hidden;margin:8px 0}.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8d5ab6,#e56b9a);transition:width .05s}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.feature{padding:12px;border-radius:16px;background:rgba(255,255,255,.055)}
 @media(max-width:720px){.videos,.grid2{grid-template-columns:1fr}.videoBox{min-height:205px}}
+
+.piano{width:1470px;height:210px}.white{width:70px}.black1{left:48px}.black2{left:118px}.black3{left:258px}.black4{left:328px}.black5{left:398px}.black6{left:538px}.black7{left:608px}.black8{left:748px}.black9{left:818px}.black10{left:888px}.black11{left:1028px}.black12{left:1098px}.black13{left:1238px}.black14{left:1308px}.black15{left:1378px}
+.cups{display:flex;justify-content:center;gap:14px;padding:14px 4px 8px}.cup{background:#17171a;border:2px solid #74131d;min-width:88px;height:105px;box-shadow:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:42px;transition:transform .25s,filter .25s}.cup small{font-size:13px;color:#ffb7c0;margin-top:4px}.cup.shuffle{transform:translateY(-22px) rotate(-2deg)}.cup.win{filter:drop-shadow(0 0 12px #e22)}.cup.lose{opacity:.65}.game-score{text-align:center;margin-top:8px;font-weight:800;color:#ffb7c0}
 </style>
 </head>
 <body>
@@ -75,22 +78,28 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
 </div>
 
 <div class="card">
-  <b>🎹 Unser Piano – Massiv hört zu</b>
+  <b>🎹 Unser Piano – jetzt 3 Oktaven für Massiv</b>
   <div class="piano-area">
-    <div class="piano">
+    <div class="piano" id="piano">
       <div class="white-keys">
-<button class="white" data-note="261.63">C4</button><button class="white" data-note="293.66">D4</button><button class="white" data-note="329.63">E4</button><button class="white" data-note="349.23">F4</button><button class="white" data-note="392">G4</button><button class="white" data-note="440">A4</button><button class="white" data-note="493.88">H4</button><button class="white" data-note="523.25">C5</button><button class="white" data-note="587.33">D5</button><button class="white" data-note="659.25">E5</button><button class="white" data-note="698.46">F5</button><button class="white" data-note="783.99">G5</button><button class="white" data-note="880">A5</button><button class="white" data-note="987.77">H5</button><button class="white" data-note="1046.5">C6</button><button class="white" data-note="1174.66">D6</button>
-</div>
-<button class="black black1" data-note="277.18">♯</button><button class="black black2" data-note="311.13">♯</button><button class="black black3" data-note="369.99">♯</button><button class="black black4" data-note="415.3">♯</button><button class="black black5" data-note="466.16">♯</button><button class="black black6" data-note="554.37">♯</button><button class="black black7" data-note="622.25">♯</button><button class="black black8" data-note="739.99">♯</button><button class="black black9" data-note="830.61">♯</button><button class="black black10" data-note="932.33">♯</button><button class="black black11" data-note="1046.5">♯</button>
+        <button class="white" data-note="261.63">C4</button><button class="white" data-note="293.66">D4</button><button class="white" data-note="329.63">E4</button><button class="white" data-note="349.23">F4</button><button class="white" data-note="392">G4</button><button class="white" data-note="440">A4</button><button class="white" data-note="493.88">H4</button>
+        <button class="white" data-note="523.25">C5</button><button class="white" data-note="587.33">D5</button><button class="white" data-note="659.25">E5</button><button class="white" data-note="698.46">F5</button><button class="white" data-note="783.99">G5</button><button class="white" data-note="880">A5</button><button class="white" data-note="987.77">H5</button>
+        <button class="white" data-note="1046.5">C6</button><button class="white" data-note="1174.66">D6</button><button class="white" data-note="1318.51">E6</button><button class="white" data-note="1396.91">F6</button><button class="white" data-note="1567.98">G6</button><button class="white" data-note="1760">A6</button><button class="white" data-note="1975.53">H6</button>
+      </div>
+      <button class="black black1" data-note="277.18">♯</button><button class="black black2" data-note="311.13">♯</button><button class="black black3" data-note="369.99">♯</button><button class="black black4" data-note="415.3">♯</button><button class="black black5" data-note="466.16">♯</button>
+      <button class="black black6" data-note="554.37">♯</button><button class="black black7" data-note="622.25">♯</button><button class="black black8" data-note="739.99">♯</button><button class="black black9" data-note="830.61">♯</button><button class="black black10" data-note="932.33">♯</button>
+      <button class="black black11" data-note="1108.73">♯</button><button class="black black12" data-note="1244.51">♯</button><button class="black black13" data-note="1479.98">♯</button><button class="black black14" data-note="1661.22">♯</button><button class="black black15" data-note="1864.66">♯</button>
     </div>
   </div>
   <div class="row">
     <button id="catAnswer">🐱 Massiv antwortet musikalisch</button>
-    <button id="playMelody" class="green">▶️ Melodie abspielen</button>
+    <button id="playMelody" class="green">▶️ Lange Melodie abspielen</button>
     <button id="clearMelody" class="dark">🗑️ Melodie löschen</button>
+    <button id="meowBtn" class="dark">🐾 MIAU!</button>
     <label class="pill">🔊 <input id="volume" type="range" min="0" max="1" step=".05" value=".8"></label>
   </div>
-</div>
+  <div class="small">Massiv kann bis zu 64 Töne merken und antwortet jetzt mit längeren musikalischen Sätzen. Sein „MIAU“ ist ein eigener Katzenlaut. 🐱</div>
+</div>>
 
 <div class="card">
   <b>🎙️ Stimme mit Massiv</b>
@@ -101,6 +110,19 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
   <div class="aiState" id="recordingStatus"></div>
 </div>
 
+<div class="card game-card">
+  <b>🎩 Massivs Hütchenspiel</b>
+  <div class="small" id="gameStatus" style="margin:8px 0">Massiv versteckt seine Maus unter einem Hütchen. Beobachte gut und tippe dann auf 1, 2 oder 3! 🐭</div>
+  <div class="cups" id="cups">
+    <button class="cup" data-cup="0"><span>🎩</span><small>1</small></button>
+    <button class="cup" data-cup="1"><span>🎩</span><small>2</small></button>
+    <button class="cup" data-cup="2"><span>🎩</span><small>3</small></button>
+  </div>
+  <div class="row">
+    <button id="startGame" class="green">🎩 Spiel starten</button>
+  </div>
+  <div class="game-score" id="gameScore">Treffer: 0 • Versuche: 0 • Serie: 0 🔥</div>
+</div>
 <div class="grid2">
  <div class="card">
   <b>🧠 Massivs Gedächtnis</b>
@@ -222,6 +244,7 @@ function aiReply(text){
  if(s.includes("erinner")||s.includes("gedächtnis"))return mem.length?"Ich habe "+mem.length+" gemeinsame Erinnerung"+(mem.length===1?"":"en")+" gespeichert. ❤️":"Wir haben noch keine Erinnerung gespeichert.";
  if(s.includes("wie geht")||s.includes("fühl")||s.includes("stimmung"))return "Gerade bin ich "+mood+" und neugierig auf dich. 🐱";
  if(s.includes("danke"))return "Miau! Sehr gern. Bleib noch ein bisschen bei mir. 🐾";
+ if(s.includes("miau")||s.includes("miauen"))return "MIAU! 😸 Ich verstehe unser Codewort. Miau miau!";
  const variants=[
 "Miau! Ich höre dir zu. Erzähl mir, was gerade in deinem Kopf ist. 👂❤️",
 "Ich bin bei dir. Wir können reden, Musik machen oder einfach zusammen chillen. 🐾",
@@ -230,7 +253,7 @@ function aiReply(text){
 ]; return variants[Math.floor(Math.random()*variants.length)];
 }
 function reply(text,add=true){
- $("message").textContent="🐱 "+text;if(add)addMsg("🐱 <b>Massiv:</b> „"+escapeHTML(text)+"“");speak(text)
+ $("message").textContent="🐱 "+text;if(add)addMsg("🐱 <b>Massiv:</b> „"+escapeHTML(text)+"“");speak(text);maybeMeow()
 }
 function sendText(){
  const v=$("chatInput").value.trim();if(!v)return;
@@ -241,7 +264,7 @@ $("sendChat").onclick=sendText;$("chatInput").addEventListener("keydown",e=>{if(
 $("rememberChat").onclick=()=>{const v=$("chatInput").value.trim();if(!v)return;remember(v);$("chatInput").value="";reply("Gespeichert. Das bleibt auf diesem Gerät in der App.",false)};
 
 document.querySelectorAll(".white,.black").forEach(k=>k.addEventListener("pointerdown",e=>{
- e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>32)melody.shift();localStorage.setItem("massivMelody",JSON.stringify(melody));
+ e.preventDefault();const f=+k.dataset.note;note(f);melody.push(f);if(melody.length>64)melody.shift();localStorage.setItem("massivMelody",JSON.stringify(melody));
  k.classList.add("active");setTimeout(()=>k.classList.remove("active"),120);
  state.listening=true;updateAIState("Massiv hört deine Musik … 🎵");$("message").textContent="🐱 Massiv hört zu …";
  clearTimeout(window.noteListenTimer);window.noteListenTimer=setTimeout(()=>{state.listening=false;updateAIState(callActive?"Massiv hört dir zu … 👂":"Massiv ist bereit 🐾")},800);
@@ -296,6 +319,68 @@ $("startRecord").onclick=async()=>{
 $("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();$("startRecord").disabled=false;$("stopRecord").disabled=true;state.listening=false};
 
 window.addEventListener("beforeunload",()=>{audioStream?.getTracks().forEach(t=>t.stop());recordingStream?.getTracks().forEach(t=>t.stop())});
+
+// --- MIAU sound, longer melodies and Massiv's shell game ---
+function meow(){
+ const c=audio(),now=c.currentTime;
+ const o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();
+ o.type="sine";f.type="lowpass";f.frequency.value=1800;
+ o.frequency.setValueAtTime(520,now);o.frequency.exponentialRampToValueAtTime(920,now+.18);o.frequency.exponentialRampToValueAtTime(380,now+.58);
+ g.gain.setValueAtTime(.001,now);g.gain.exponentialRampToValueAtTime(Math.max(.01,.34*volume),now+.035);g.gain.exponentialRampToValueAtTime(.001,now+.62);
+ o.connect(f);f.connect(g);g.connect(c.destination);o.start(now);o.stop(now+.65);
+ state.speaking=true;state.expression="talking";updateAIState("MIAU! 🐱");
+ setTimeout(()=>{state.speaking=false;state.expression="normal";updateAIState(callActive?"Massiv hört dir zu … 👂":"Massiv ist bereit 🐾")},700);
+}
+function maybeMeow(){
+ if(Math.random()<.28){setTimeout(meow,220);}
+}
+function longCatMelody(src){
+ const base=src.length?src.slice(-64):[392,440,523.25,493.88,440,392,329.63,392];
+ const extra=[392,440,493.88,523.25,587.33,523.25,493.88,440];
+ const seq=base.concat(extra,base.slice().reverse().slice(0,Math.min(16,base.length)));
+ seq.forEach((f,i)=>note(Math.min(1975,f),.34,i*.36));
+ return seq;
+}
+$("meowBtn").onclick=meow;
+$("playMelody").onclick=()=>{
+ const m=JSON.parse(localStorage.getItem("massivMelody")||"[]");
+ if(!m.length){reply("Spiel mir zuerst ein paar Töne vor, dann mache ich daraus eine lange Melodie.");return}
+ longCatMelody(m);$("message").textContent="🎹 Massiv spielt unsere lange Melodie …";state.speaking=true;
+ setTimeout(()=>state.speaking=false,Math.min(30000,(m.length+24)*360+500));
+};
+$("catAnswer").onclick=()=>{
+ const m=JSON.parse(localStorage.getItem("massivMelody")||"[]");
+ if(!m.length){reply("Spiel mir zuerst ein paar Töne vor, dann antworte ich musikalisch.");return}
+ const seq=longCatMelody(m.slice(-32));
+ $("massivCamStatus").textContent="Massiv improvisiert 🎵";$("message").textContent="🐱 Massiv antwortet mit einer langen Melodie …";
+ addMsg("🐱 <b>Massiv:</b> „Ich habe deine Melodie aufgenommen und daraus eine längere Antwort gemacht. 🎶 Miau!“");
+ speak("Miau! Ich antworte dir mit meiner eigenen langen Melodie.");
+};
+const gameState={target:-1,score:0,tries:0,streak:0,busy:false};
+function updateGameScore(){$("gameScore").textContent=`Treffer: ${gameState.score} • Versuche: ${gameState.tries} • Serie: ${gameState.streak} 🔥`}
+function startGame(){
+ gameState.target=Math.floor(Math.random()*3);gameState.busy=true;
+ $("gameStatus").textContent="Massiv versteckt die Maus … schau genau hin! 🐭";
+ const cups=[...document.querySelectorAll(".cup")];
+ cups.forEach(x=>x.classList.remove("win","lose"));
+ let order=[0,1,2],steps=0;
+ const shuffle=setInterval(()=>{
+   order.sort(()=>Math.random()-.5);cups.forEach((cup,i)=>cup.style.order=order[i]);cups.forEach(c=>c.classList.toggle("shuffle",Math.random()>.45));
+   if(++steps>=9){clearInterval(shuffle);cups.forEach(c=>{c.classList.remove("shuffle");c.style.order=""});gameState.busy=false;$("gameStatus").textContent="Jetzt bist du dran! Wo ist die Maus? 🐭"; }
+ },220);
+}
+document.querySelectorAll(".cup").forEach(cup=>cup.onclick=()=>{
+ if(gameState.busy||gameState.target<0)return;
+ const pick=+cup.dataset.cup;gameState.tries++;
+ const cups=[...document.querySelectorAll(".cup")];
+ if(pick===gameState.target){
+   gameState.score++;gameState.streak++;cup.classList.add("win");$("gameStatus").textContent="😸 Richtig! Du hast Massiv ausgetrickst – MIAU! 🐭🎉";meow();
+ }else{
+   gameState.streak=0;cup.classList.add("lose");cups[gameState.target].classList.add("win");$("gameStatus").textContent="😹 Fast! Massiv hatte die Maus unter Hütchen "+(gameState.target+1)+" versteckt. MIAU!";maybeMeow();
+ }
+ gameState.busy=true;updateGameScore();setTimeout(()=>startGame(),1200);
+});
+$("startGame").onclick=startGame;
 </script>
 </body>
 </html>
