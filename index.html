@@ -38,6 +38,8 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
 
 .piano{width:1470px;height:210px}.white{width:70px}.black1{left:48px}.black2{left:118px}.black3{left:258px}.black4{left:328px}.black5{left:398px}.black6{left:538px}.black7{left:608px}.black8{left:748px}.black9{left:818px}.black10{left:888px}.black11{left:1028px}.black12{left:1098px}.black13{left:1238px}.black14{left:1308px}.black15{left:1378px}
 .cups{display:flex;justify-content:center;gap:14px;padding:14px 4px 8px}.cup{background:#17171a;border:2px solid #74131d;min-width:88px;height:105px;box-shadow:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:42px;transition:transform .25s,filter .25s}.cup small{font-size:13px;color:#ffb7c0;margin-top:4px}.cup.shuffle{transform:translateY(-22px) rotate(-2deg)}.cup.win{filter:drop-shadow(0 0 12px #e22)}.cup.lose{opacity:.65}.game-score{text-align:center;margin-top:8px;font-weight:800;color:#ffb7c0}
+
+.game-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.game-tile{min-height:105px;background:#111114;border-color:#3b2025;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.game-tile span{font-size:30px}.game-tile strong{font-size:13px}.game-tile small{font-size:11px;color:#aaa}.game-tile.selected{border-color:#d21b2e;box-shadow:0 0 18px rgba(210,27,46,.25)}.selected-game{margin-top:12px;padding:12px;border-radius:16px;background:#08080a;border:1px solid #242428}.game-title{text-align:center;font-weight:900;font-size:18px}.game-board{margin-top:12px}.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.memory-card{height:72px;background:#17171a;border:1px solid #53151d;border-radius:12px;font-size:27px}.memory-card.open{background:#2b1519}.catch-zone{height:180px;position:relative;background:#101013;border-radius:15px;overflow:hidden;border:1px solid #3a1b20}.mouse{position:absolute;font-size:42px;padding:5px;background:transparent;border:0;box-shadow:none}.music-duel{text-align:center;padding:12px}.music-duel button{margin-top:8px}@media(max-width:650px){.game-grid{grid-template-columns:repeat(2,1fr)}.memory-grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
@@ -99,7 +101,7 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
     <label class="pill">🔊 <input id="volume" type="range" min="0" max="1" step=".05" value=".8"></label>
   </div>
   <div class="small">Massiv kann bis zu 64 Töne merken und antwortet jetzt mit längeren musikalischen Sätzen. Sein „MIAU“ ist ein eigener Katzenlaut. 🐱</div>
-</div>>
+</div>
 
 <div class="card">
   <b>🎙️ Stimme mit Massiv</b>
@@ -110,19 +112,6 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
   <div class="aiState" id="recordingStatus"></div>
 </div>
 
-<div class="card game-card">
-  <b>🎩 Massivs Hütchenspiel</b>
-  <div class="small" id="gameStatus" style="margin:8px 0">Massiv versteckt seine Maus unter einem Hütchen. Beobachte gut und tippe dann auf 1, 2 oder 3! 🐭</div>
-  <div class="cups" id="cups">
-    <button class="cup" data-cup="0"><span>🎩</span><small>1</small></button>
-    <button class="cup" data-cup="1"><span>🎩</span><small>2</small></button>
-    <button class="cup" data-cup="2"><span>🎩</span><small>3</small></button>
-  </div>
-  <div class="row">
-    <button id="startGame" class="green">🎩 Spiel starten</button>
-  </div>
-  <div class="game-score" id="gameScore">Treffer: 0 • Versuche: 0 • Serie: 0 🔥</div>
-</div>
 <div class="grid2">
  <div class="card">
   <b>🧠 Massivs Gedächtnis</b>
@@ -381,6 +370,56 @@ document.querySelectorAll(".cup").forEach(cup=>cup.onclick=()=>{
  gameState.busy=true;updateGameScore();setTimeout(()=>startGame(),1200);
 });
 $("startGame").onclick=startGame;
+
+// --- Massiv Spielesammlung ---
+const collectionState={game:"cups",memoryFirst:null,memoryLock:false,mouseTimer:null};
+const gameCatalog={
+ cups:["🎩 Hütchenspiel","Massiv versteckt seine Maus. Beobachte die Hütchen und finde sie."],
+ memory:["🧠 Memory","Finde die gleichen Paare. Massiv merkt sich deine Bestleistung."],
+ catch:["🐭 Mäusejagd","Tippe die Maus an, bevor sie wieder verschwindet!"],
+ music:["🎵 Musik-Duell","Spiele deine Melodie – Massiv antwortet mit seiner eigenen."]
+};
+function renderGame(name){
+ collectionState.game=name;$("selectedGameTitle").textContent=gameCatalog[name][0];$("selectedGameDesc").textContent=gameCatalog[name][1];
+ document.querySelectorAll(".game-tile").forEach(b=>b.classList.toggle("selected",b.dataset.game===name));
+ const board=$("gameBoard");
+ if(name==="cups") board.innerHTML=`<div class="cups" id="collectionCups"><button class="cup" data-cup="0"><span>🎩</span><small>1</small></button><button class="cup" data-cup="1"><span>🎩</span><small>2</small></button><button class="cup" data-cup="2"><span>🎩</span><small>3</small></button></div><div class="row"><button id="collectionStart" class="green">🎩 Spiel starten</button></div><div class="game-score" id="collectionScore">Treffer: 0 • Versuche: 0 • Serie: 0 🔥</div>`;
+ if(name==="memory"){
+  const icons=["🐾","🐱","🎹","❤️","🐭","⭐","🐾","🐱","🎹","❤️","🐭","⭐"].sort(()=>Math.random()-.5);
+  board.innerHTML='<div class="memory-grid">'+icons.map((x,i)=>`<button class="memory-card" data-i="${i}" data-v="${x}">❓</button>`).join("")+'</div><div class="game-score" id="memoryScore">Paare: 0 • Versuche: 0</div>';
+  document.querySelectorAll(".memory-card").forEach(b=>b.onclick=memoryPick);
+ }
+ if(name==="catch") board.innerHTML='<div class="catch-zone" id="catchZone"></div><div class="game-score" id="catchScore">Mäuse: 0 • Zeit: 20s</div><div class="row"><button id="catchStart" class="green">🐭 Mäusejagd starten</button></div>';
+ if(name==="music") board.innerHTML='<div class="music-duel">🎹 Spiele oben eine Melodie. Massiv hört zu und fordert dich heraus.<br><button id="musicDuelBtn" class="green">🐱 Massiv fordert mich heraus!</button></div>';
+ if(name==="cups") bindCups();
+ if(name==="catch") $("catchStart").onclick=startCatch;
+ if(name==="music") $("musicDuelBtn").onclick=()=>{if(!melody.length){reply("Miau! Erst eine kleine Melodie für mich, dann machen wir unser Musik-Duell.");return} $("message").textContent="🐱 Massiv fordert dich heraus!";longCatMelody(melody);maybeMeow();speak("Miau! Jetzt bist du dran. Kannst du meine Melodie übertreffen?")};
+}
+function bindCups(){
+ let target=Math.floor(Math.random()*3),busy=false,score=0,tries=0,streak=0;
+ const cups=[...document.querySelectorAll("#collectionCups .cup")];
+ function start(){
+  target=Math.floor(Math.random()*3);busy=true;$("gameBoard").querySelector(".game-score").textContent=`Treffer: ${score} • Versuche: ${tries} • Serie: ${streak} 🔥`;
+  let step=0;const sh=setInterval(()=>{cups.forEach(c=>c.classList.toggle("shuffle",Math.random()>.5));if(++step>8){clearInterval(sh);cups.forEach(c=>c.classList.remove("shuffle"));busy=false}},180)
+ }
+ cups.forEach(c=>c.onclick=()=>{if(busy)return;tries++;if(+c.dataset.cup===target){score++;streak++;c.classList.add("win");meow();$("message").textContent="😸 MIAU! Richtig!";}else{streak=0;c.classList.add("lose");$("message").textContent="😹 Miau! Fast – Massiv hatte die Maus unter Hütchen "+(target+1)+"."}setTimeout(()=>{cups.forEach(x=>x.classList.remove("win","lose"));start()},650)});
+ $("collectionStart").onclick=start;
+}
+function memoryPick(e){
+ if(collectionState.memoryLock)return;const b=e.currentTarget;
+ if(b.classList.contains("open"))return;b.classList.add("open");b.textContent=b.dataset.v;
+ if(!collectionState.memoryFirst){collectionState.memoryFirst=b;return}
+ const first=collectionState.memoryFirst;collectionState.memoryLock=true;
+ const score=$("memoryScore");let parts=score.textContent.match(/Paare: (\d+) • Versuche: (\d+)/);let pairs=+parts[1]+(first.dataset.v===b.dataset.v?1:0),tries=+parts[2]+1;score.textContent=`Paare: ${pairs} • Versuche: ${tries}`;
+ if(first.dataset.v===b.dataset.v){meow();collectionState.memoryFirst=null;collectionState.memoryLock=false}else setTimeout(()=>{first.classList.remove("open");first.textContent="❓";b.classList.remove("open");b.textContent="❓";collectionState.memoryFirst=null;collectionState.memoryLock=false},600);
+}
+function startCatch(){
+ const zone=$("catchZone");let score=0,time=20;clearInterval(collectionState.mouseTimer);
+ function spawn(){zone.innerHTML="";const m=document.createElement("button");m.className="mouse";m.textContent="🐭";m.style.left=Math.random()*82+"%";m.style.top=Math.random()*68+"%";m.onclick=()=>{score++;m.remove();meow();spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`};zone.appendChild(m)}
+ spawn();$("catchScore").textContent=`Mäuse: 0 • Zeit: 20s`;
+ collectionState.mouseTimer=setInterval(()=>{time--;if(time<=0){clearInterval(collectionState.mouseTimer);zone.innerHTML="";$("catchScore").textContent=`Mäuse: ${score} • Fertig! Massiv: ${score>7?"😸 MIAU! Du bist schnell!":"😹 MIAU! Ich muss noch üben!"}`;maybeMeow()}else{spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`}},1000)
+}
+document.querySelectorAll(".game-tile").forEach(b=>b.onclick=()=>renderGame(b.dataset.game));renderGame("cups");
 </script>
 </body>
 </html>
