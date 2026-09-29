@@ -474,63 +474,231 @@ $("catAnswer").onclick=()=>{
  addMsg("🐱 <b>Massiv:</b> „Ich habe deine Melodie aufgenommen und daraus eine längere Antwort gemacht. 🎶 Miau!“");
  speak("Miau! Ich antworte dir mit meiner eigenen langen Melodie.");
 };
-// --- Massiv Spielesammlung ---
-const collectionState={game:"cups",memoryFirst:null,memoryLock:false,mouseTimer:null};
+// --- Massiv Spielesammlung: Massiv spielt wirklich mit ---
+const collectionState={game:"cups",memoryFirst:null,memoryLock:false,mouseTimer:null,duelBusy:false};
+
 const gameCatalog={
- cups:["🎩 Hütchenspiel","Massiv versteckt seine Maus. Beobachte die Hütchen und finde sie."],
- memory:["🧠 Memory","Finde die gleichen Paare. Massiv merkt sich deine Bestleistung."],
- catch:["🐭 Mäusejagd","Tippe die Maus an, bevor sie wieder verschwindet!"],
- music:["🎵 Musik-Duell","Spiele deine Melodie – Massiv antwortet mit seiner eigenen."]
+ cups:["🎩 Hütchenspiel","Massiv versteckt die Maus und spielt gegen dich."],
+ memory:["🧠 Memory","Du und Massiv deckt abwechselnd Karten auf."],
+ catch:["🐭 Mäusejagd","Du jagst Mäuse, Massiv jagt mit dir."],
+ music:["🎵 Musik-Duell","Du spielst vor – Massiv antwortet musikalisch."]
 };
+
 function renderGame(name){
  collectionState.game=name;
- safeText("selectedGameTitle",gameCatalog[name][0]);safeText("selectedGameDesc",gameCatalog[name][1]);
+ safeText("selectedGameTitle",gameCatalog[name][0]);
+ safeText("selectedGameDesc",gameCatalog[name][1]);
  document.querySelectorAll(".game-tile").forEach(b=>b.classList.toggle("selected",b.dataset.game===name));
  const board=$("gameBoard");if(!board)return;
- if(name==="cups") board.innerHTML=`<div class="cups" id="collectionCups"><button class="cup" data-cup="0"><span>🎩</span><small>1</small></button><button class="cup" data-cup="1"><span>🎩</span><small>2</small></button><button class="cup" data-cup="2"><span>🎩</span><small>3</small></button></div><div class="row"><button id="collectionStart" class="green">🎩 Spiel starten</button></div><div class="game-score" id="collectionScore">Treffer: 0 • Versuche: 0 • Serie: 0 🔥</div>`;
+ clearInterval(collectionState.mouseTimer);collectionState.mouseTimer=null;
+ collectionState.memoryFirst=null;collectionState.memoryLock=false;collectionState.duelBusy=false;
+
+ if(name==="cups"){
+  board.innerHTML=`<div class="cups" id="collectionCups">
+   <button class="cup" data-cup="0"><span>🎩</span><small>1</small></button>
+   <button class="cup" data-cup="1"><span>🎩</span><small>2</small></button>
+   <button class="cup" data-cup="2"><span>🎩</span><small>3</small></button>
+  </div>
+  <div class="row"><button id="collectionStart" class="green">🎩 Massiv versteckt die Maus</button></div>
+  <div class="game-score" id="collectionScore">Massiv: 0 • Du: 0 • Runde: bereit</div>`;
+  bindCups();
+ }
  if(name==="memory"){
   const icons=["🐾","🐱","🎹","❤️","🐭","⭐","🐾","🐱","🎹","❤️","🐭","⭐"].sort(()=>Math.random()-.5);
-  board.innerHTML='<div class="memory-grid">'+icons.map((x,i)=>`<button class="memory-card" data-i="${i}" data-v="${x}">❓</button>`).join("")+'</div><div class="game-score" id="memoryScore">Paare: 0 • Versuche: 0</div>';
+  board.innerHTML='<div class="memory-grid">'+icons.map((x,i)=>`<button class="memory-card" data-i="${i}" data-v="${x}">❓</button>`).join("")+
+   '</div><div class="game-score" id="memoryScore">Du: 0 • Massiv: 0 • Zug: Massiv</div>'+
+   '<div class="row"><button id="memoryStart" class="green">🐱 Mit Massiv spielen</button></div>';
   document.querySelectorAll(".memory-card").forEach(b=>b.onclick=memoryPick);
+  $("memoryStart").onclick=startMemory;
  }
- if(name==="catch") board.innerHTML='<div class="catch-zone" id="catchZone"></div><div class="game-score" id="catchScore">Mäuse: 0 • Zeit: 20s</div><div class="row"><button id="catchStart" class="green">🐭 Mäusejagd starten</button></div>';
- if(name==="music") board.innerHTML='<div class="music-duel">🎹 Spiele oben eine Melodie. Massiv hört zu und fordert dich heraus.<br><button id="musicDuelBtn" class="green">🐱 Massiv fordert mich heraus!</button></div>';
- if(name==="cups") bindCups();
- if(name==="catch") $("catchStart").onclick=startCatch;
- if(name==="music") $("musicDuelBtn").onclick=()=>{if(!melody.length){reply("Miau! Erst eine kleine Melodie für mich, dann machen wir unser Musik-Duell.");return} $("message").textContent="🐱 Massiv fordert dich heraus!";addMoment("Unser Musik-Duell hat begonnen.");longCatMelody(melody);maybeMeow();speak("Miau! Jetzt bist du dran. Kannst du meine Melodie übertreffen?")};
+ if(name==="catch"){
+  board.innerHTML='<div class="catch-zone" id="catchZone"></div><div class="game-score" id="catchScore">Du: 0 • Massiv: 0 • Zeit: 20s</div><div class="row"><button id="catchStart" class="green">🐭 Mit Massiv jagen</button></div>';
+  $("catchStart").onclick=startCatch;
+ }
+ if(name==="music"){
+  board.innerHTML='<div class="music-duel">🎹 Spiele oben eine Melodie. Massiv hört zu und antwortet.<div class="row"><button id="musicDuelBtn" class="green">🐱 Musik-Duell starten</button></div><div id="musicDuelStatus" class="game-score">Massiv wartet auf deine Melodie.</div></div>';
+  $("musicDuelBtn").onclick=startMusicDuel;
+ }
 }
+
 function bindCups(){
- let target=Math.floor(Math.random()*3),busy=false,score=0,tries=0,streak=0;
+ let target=-1,busy=true,massivScore=0,userScore=0,round=0;
  const cups=[...document.querySelectorAll("#collectionCups .cup")];
  function start(){
-  target=Math.floor(Math.random()*3);busy=true;$("gameBoard").querySelector(".game-score").textContent=`Treffer: ${score} • Versuche: ${tries} • Serie: ${streak} 🔥`;
-  let step=0;const sh=setInterval(()=>{cups.forEach(c=>c.classList.toggle("shuffle",Math.random()>.5));if(++step>8){clearInterval(sh);cups.forEach(c=>c.classList.remove("shuffle"));busy=false}},180)
+  target=Math.floor(Math.random()*3);busy=true;round++;
+  $("collectionScore").textContent=`Massiv: ${massivScore} • Du: ${userScore} • Massiv versteckt …`;
+  cups.forEach(c=>c.classList.remove("win","lose"));
+  let step=0;
+  const sh=setInterval(()=>{
+   cups.forEach(c=>c.classList.toggle("shuffle",Math.random()>.5));
+   if(++step>10){
+    clearInterval(sh);cups.forEach(c=>c.classList.remove("shuffle"));
+    busy=false;
+    $("collectionScore").textContent=`Massiv: ${massivScore} • Du: ${userScore} • Runde ${round}: Wo ist die Maus?`;
+    reply("Miau! Ich habe die Maus versteckt. Such sie! 😼",true);
+   }
+  },150);
  }
- cups.forEach(c=>c.onclick=()=>{if(busy)return;tries++;if(+c.dataset.cup===target){score++;streak++;c.classList.add("win");meow();$("message").textContent="😸 MIAU! Richtig!";}else{streak=0;c.classList.add("lose");$("message").textContent="😹 Miau! Fast – Massiv hatte die Maus unter Hütchen "+(target+1)+"."}setTimeout(()=>{cups.forEach(x=>x.classList.remove("win","lose"));start()},650)});
+ cups.forEach(c=>c.onclick=()=>{
+  if(busy||target<0)return;
+  busy=true;
+  const pick=+c.dataset.cup;
+  if(pick===target){
+   userScore++;c.classList.add("win");
+   $("collectionScore").textContent=`Massiv: ${massivScore} • Du: ${userScore} • Gefunden! 🐭`;
+   reply("MIAU! Du hast meine Maus gefunden! Noch eine Runde? 😸",true);
+   recordGame("Hütchenspiel",userScore);
+  }else{
+   massivScore++;c.classList.add("lose");cups[target].classList.add("win");
+   $("collectionScore").textContent=`Massiv: ${massivScore} • Du: ${userScore} • Ich hatte sie unter ${target+1}!`;
+   reply("Mrrrau! Erwischt! Ich hatte die Maus unter Hütchen "+(target+1)+" versteckt. 😼",true);
+   recordGame("Hütchenspiel",massivScore);
+  }
+  setTimeout(start,1100);
+ });
  $("collectionStart").onclick=start;
 }
-function memoryPick(e){
- if(!e||!e.currentTarget)return;
- if(collectionState.memoryLock)return;const b=e.currentTarget;
- if(b.classList.contains("open"))return;b.classList.add("open");b.textContent=b.dataset.v;
- if(!collectionState.memoryFirst){collectionState.memoryFirst=b;return}
- const first=collectionState.memoryFirst;collectionState.memoryLock=true;
- const score=$("memoryScore");let parts=score.textContent.match(/Paare: (\d+) • Versuche: (\d+)/);let pairs=+parts[1]+(first.dataset.v===b.dataset.v?1:0),tries=+parts[2]+1;score.textContent=`Paare: ${pairs} • Versuche: ${tries}`;
- if(first.dataset.v===b.dataset.v){meow();collectionState.memoryFirst=null;collectionState.memoryLock=false;recordGame("Memory",pairs)}else setTimeout(()=>{first.classList.remove("open");first.textContent="❓";b.classList.remove("open");b.textContent="❓";collectionState.memoryFirst=null;collectionState.memoryLock=false},600);
+
+let memoryDeck=[],memoryUserPairs=0,memoryMassivPairs=0,memoryTurn="massiv",memoryBest={};
+function startMemory(){
+ const cards=[...document.querySelectorAll(".memory-card")];
+ if(!cards.length)return;
+ memoryDeck=cards;
+ memoryUserPairs=0;memoryMassivPairs=0;memoryTurn="massiv";
+ memoryBest={};
+ cards.forEach(b=>{b.disabled=false;b.classList.remove("open");b.textContent="❓"});
+ $("memoryScore").textContent="Du: 0 • Massiv: 0 • Zug: Massiv";
+ reply("Miau! Ich beginne. Schau gut zu, ich merke mir die Karten. 🧠🐾",true);
+ setTimeout(massivMemoryTurn,900);
 }
+function revealMemoryCard(card){
+ card.classList.add("open");card.textContent=card.dataset.v;
+}
+function hideMemoryPair(a,b){
+ a.classList.remove("open");b.classList.remove("open");a.textContent="❓";b.textContent="❓";
+}
+function updateMemoryScore(){
+ $("memoryScore").textContent=`Du: ${memoryUserPairs} • Massiv: ${memoryMassivPairs} • Zug: ${memoryTurn==="user"?"Du":"Massiv"}`;
+}
+function availableMemoryCards(){
+ return memoryDeck.filter(c=>!c.classList.contains("matched"));
+}
+function memoryFinishPair(a,b,owner){
+ const match=a.dataset.v===b.dataset.v;
+ if(match){
+  a.classList.add("matched");b.classList.add("matched");
+  if(owner==="massiv")memoryMassivPairs++;else memoryUserPairs++;
+  recordGame("Memory",owner==="massiv"?memoryMassivPairs:memoryUserPairs);
+  meow();
+  updateMemoryScore();
+  const left=availableMemoryCards();
+  if(!left.length){
+   const winner=memoryUserPairs===memoryMassivPairs?"Unentschieden!":memoryUserPairs>memoryMassivPairs?"Du hast gewonnen!":"Massiv gewinnt!";
+   reply("Miau! "+winner+" 🐾 Wir spielen noch eine Runde?",true);
+   return true;
+  }
+ }else hideMemoryPair(a,b);
+ return match;
+}
+function randomMemoryPair(){
+ const cards=availableMemoryCards();
+ if(cards.length<2)return null;
+ const first=cards[Math.floor(Math.random()*cards.length)];
+ const candidates=cards.filter(c=>c!==first);
+ const same=candidates.find(c=>c.dataset.v===first.dataset.v);
+ return [first,same||candidates[Math.floor(Math.random()*candidates.length)]];
+}
+function massivMemoryTurn(){
+ if(memoryTurn!=="massiv")return;
+ const pair=randomMemoryPair();if(!pair)return;
+ revealMemoryCard(pair[0]);setTimeout(()=>revealMemoryCard(pair[1]),500);
+ setTimeout(()=>{
+  const matched=memoryFinishPair(pair[0],pair[1],"massiv");
+  if(matched){memoryTurn="massiv";setTimeout(massivMemoryTurn,850)}
+  else{memoryTurn="user";memoryFirst=null;updateMemoryScore();reply("Jetzt bist du dran. Decke zwei Karten auf! 🐱",true)}
+ },1050);
+}
+let memoryFirst=null;
+function memoryPick(e){
+ if(memoryTurn!=="user"||collectionState.memoryLock)return;
+ const b=e.currentTarget;
+ if(b.classList.contains("open")||b.classList.contains("matched"))return;
+ revealMemoryCard(b);
+ if(!memoryFirst){memoryFirst=b;return}
+ const first=memoryFirst;memoryFirst=null;collectionState.memoryLock=true;
+ setTimeout(()=>{
+  const matched=memoryFinishPair(first,b,"user");
+  collectionState.memoryLock=false;
+  if(availableMemoryCards().length){
+   memoryTurn=matched?"user":"massiv";
+   updateMemoryScore();
+   if(matched)reply("Miau! Treffer! Du darfst direkt noch einmal. 😸",true);
+   else{reply("Kein Paar. Jetzt bin ich dran! 👀",true);setTimeout(massivMemoryTurn,800)}
+  }
+ },550);
+}
+
 function recordGame(name,score){
  life.games=life.games||{};life.games[name]=life.games[name]||{plays:0,best:0};
  life.games[name].plays++;life.games[name].best=Math.max(life.games[name].best,score||0);
- addMoment("Wir haben "+name+" gespielt"+(score!=null?": "+score+" Punkte":"")+" .");
- saveLife();
+ addMoment("Wir haben "+name+" gespielt"+(score!=null?": "+score+" Punkte":"")+".");
+ saveLife();renderLife();
 }
+
 function startCatch(){
- const zone=$("catchZone");let score=0,time=20;clearInterval(collectionState.mouseTimer);
- function spawn(){zone.innerHTML="";const m=document.createElement("button");m.className="mouse";m.textContent="🐭";m.style.left=Math.random()*82+"%";m.style.top=Math.random()*68+"%";m.onclick=()=>{score++;m.remove();meow();spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`};zone.appendChild(m)}
- spawn();$("catchScore").textContent=`Mäuse: 0 • Zeit: 20s`;
- collectionState.mouseTimer=setInterval(()=>{time--;if(time<=0){clearInterval(collectionState.mouseTimer);zone.innerHTML="";$("catchScore").textContent=`Mäuse: ${score} • Fertig! Massiv: ${score>7?"😸 MIAU! Du bist schnell!":"😹 MIAU! Ich muss noch üben!"}`;recordGame("Mäusejagd",score);maybeMeow()}else{spawn();$("catchScore").textContent=`Mäuse: ${score} • Zeit: ${time}s`}},1000)
+ const zone=$("catchZone");if(!zone)return;
+ let userScore=0,massivScore=0,time=20;
+ clearInterval(collectionState.mouseTimer);
+ function spawn(owner){
+  zone.innerHTML="";
+  const m=document.createElement("button");m.className="mouse";m.textContent="🐭";
+  m.style.left=Math.random()*82+"%";m.style.top=Math.random()*68+"%";
+  if(owner==="massiv")m.title="Massiv jagt die Maus!";
+  m.onclick=()=>{
+   userScore++;m.remove();meow();
+   $("catchScore").textContent=`Du: ${userScore} • Massiv: ${massivScore} • Zeit: ${time}s`;
+   reply("MIAU! Du warst schneller! 🐭😸",true);spawn("massiv");
+  };
+  zone.appendChild(m);
+ }
+ $("catchScore").textContent="Du: 0 • Massiv: 0 • Massiv jagt mit dir!";
+ reply("Miau! Wir jagen zusammen. Wenn du eine Maus erwischst, schicke ich die nächste! 🐭",true);
+ spawn("massiv");
+ collectionState.mouseTimer=setInterval(()=>{
+  time--;
+  if(time<=0){
+   clearInterval(collectionState.mouseTimer);collectionState.mouseTimer=null;zone.innerHTML="";
+   const result=userScore===massivScore?"Unentschieden!":userScore>massivScore?"Du hast mich geschlagen!":"Ich habe dich geschlagen!";
+   $("catchScore").textContent=`Du: ${userScore} • Massiv: ${massivScore} • ${result}`;
+   recordGame("Mäusejagd",userScore);
+   reply("Miau! "+result+" Das war gut! 🐾",true);
+   return;
+  }
+  if(Math.random()<0.55){
+   massivScore++;$("catchScore").textContent=`Du: ${userScore} • Massiv: ${massivScore} • Zeit: ${time}s`;
+   reply("Miau! Ich habe die Maus erwischt! 😼🐭",true);spawn("massiv");
+  }else{
+   $("catchScore").textContent=`Du: ${userScore} • Massiv: ${massivScore} • Zeit: ${time}s`;
+  }
+ },1000);
 }
-document.querySelectorAll(".game-tile").forEach(b=>b.onclick=()=>renderGame(b.dataset.game));renderGame("cups");
+function startMusicDuel(){
+ if(collectionState.duelBusy)return;
+ const m=JSON.parse(localStorage.getItem("massivMelody")||"[]");
+ if(!m.length){reply("Miau! Spiel mir zuerst ein paar Töne auf dem Piano vor, dann trete ich gegen dich an.");return}
+ collectionState.duelBusy=true;
+ $("musicDuelStatus").textContent="Massiv hört deine Melodie … 👂🎵";
+ reply("Ich höre genau zu. Jetzt kommt meine Antwort!",true);
+ setTimeout(()=>{
+  const seq=longCatMelody(m.slice(-32));
+  $("musicDuelStatus").textContent="Massiv spielt seine Antwort. Jetzt bist wieder du dran!";
+  speak("Miau! Das ist meine Antwort. Jetzt übertriff mich!");
+  addMoment("Massiv hat im Musik-Duell auf deine Melodie geantwortet.");
+  collectionState.duelBusy=false;
+ },900);
+}
+document.querySelectorAll(".game-tile").forEach(b=>b.onclick=()=>renderGame(b.dataset.game));
+renderGame("cups");
 
 /* --- Massiv Internet-Werkstatt: öffentliche Recherche + bewusst freigegebene Konten --- */
 const researchKey="massivResearch";
