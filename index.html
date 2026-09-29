@@ -474,32 +474,6 @@ $("catAnswer").onclick=()=>{
  addMsg("🐱 <b>Massiv:</b> „Ich habe deine Melodie aufgenommen und daraus eine längere Antwort gemacht. 🎶 Miau!“");
  speak("Miau! Ich antworte dir mit meiner eigenen langen Melodie.");
 };
-const gameState={target:-1,score:0,tries:0,streak:0,busy:false};
-function updateGameScore(){$("gameScore").textContent=`Treffer: ${gameState.score} • Versuche: ${gameState.tries} • Serie: ${gameState.streak} 🔥`}
-function startGame(){
- gameState.target=Math.floor(Math.random()*3);gameState.busy=true;
- $("gameStatus").textContent="Massiv versteckt die Maus … schau genau hin! 🐭";
- const cups=[...document.querySelectorAll(".cup")];
- cups.forEach(x=>x.classList.remove("win","lose"));
- let order=[0,1,2],steps=0;
- const shuffle=setInterval(()=>{
-   order.sort(()=>Math.random()-.5);cups.forEach((cup,i)=>cup.style.order=order[i]);cups.forEach(c=>c.classList.toggle("shuffle",Math.random()>.45));
-   if(++steps>=9){clearInterval(shuffle);cups.forEach(c=>{c.classList.remove("shuffle");c.style.order=""});gameState.busy=false;$("gameStatus").textContent="Jetzt bist du dran! Wo ist die Maus? 🐭"; }
- },220);
-}
-document.querySelectorAll(".cup").forEach(cup=>cup.onclick=()=>{
- if(gameState.busy||gameState.target<0)return;
- const pick=+cup.dataset.cup;gameState.tries++;
- const cups=[...document.querySelectorAll(".cup")];
- if(pick===gameState.target){
-   gameState.score++;gameState.streak++;cup.classList.add("win");$("gameStatus").textContent="😸 Richtig! Du hast Massiv ausgetrickst – MIAU! 🐭🎉";meow();
- }else{
-   gameState.streak=0;cup.classList.add("lose");cups[gameState.target].classList.add("win");$("gameStatus").textContent="😹 Fast! Massiv hatte die Maus unter Hütchen "+(gameState.target+1)+" versteckt. MIAU!";maybeMeow();
- }
- gameState.busy=true;updateGameScore();setTimeout(()=>startGame(),1200);
-});
-$("startGame").onclick=startGame;
-
 // --- Massiv Spielesammlung ---
 const collectionState={game:"cups",memoryFirst:null,memoryLock:false,mouseTimer:null};
 const gameCatalog={
