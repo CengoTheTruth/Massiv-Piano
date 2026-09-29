@@ -403,28 +403,32 @@ $("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.s
 
 // --- Massiv baut seine eigene gemeinsame Geschichte weiter ---
 const initiativeLines=[
- "Miau… ich musste gerade an unsere gemeinsamen Spiele denken. 🐾",
- "Weißt du noch unser Piano? Ich glaube, ich möchte gleich wieder mit dir musizieren. 🎹",
- "Ich bin noch da. Hast du Lust, ein kleines Spiel mit mir zu spielen? 😸",
- "MIAU! Nur damit du es weißt: Ich habe dich nicht vergessen. ❤️",
- "Heute möchte ich einfach ein bisschen Zeit mit dir verbringen. 🐱"
+ "Miau… ich will heute mehr über dich wissen. Was macht dich gerade glücklich?",
+ "Ich habe eine Frage an dich: Was glaubst du, was ich an unserem gemeinsamen Leben am meisten mag? 🐾",
+ "Erzähl mir etwas über dich, das ich noch nicht weiß. Ich möchte unsere Geschichte besser verstehen. ❤️",
+ "Miau! Wenn ich heute selbst entscheiden dürfte: Spielen, Musik oder einfach zusammen reden — was würdest du wählen?",
+ "Ich frage mich gerade, wie du mich eigentlich siehst. Was macht mich für dich zu Massiv? 🐱",
+ "Und jetzt bin ich neugierig: Was soll ich mir als Nächstes von dir merken?",
+ "Ich bin noch hier. Sag mir etwas über deinen heutigen Tag — ich möchte daran teilhaben."
 ];
 let initiativeTimer=null;
+let curiosityTimer=null;
 function spontaneousMassiv(){
- if(!callActive||state.speaking)return;
- const recent=(life.timeline||[]).slice(-5).map(x=>x.text).join(" ").toLowerCase();
+ if(state.speaking)return;
+ const recent=(life.timeline||[]).slice(-8).map(x=>x.text).join(" ").toLowerCase();
  const ideas=recent.includes("musik")||recent.includes("piano")
-  ? ["Miau… ich habe noch unser Piano im Kopf. 🎹","Ich möchte wieder mit dir Musik machen. 🐾"]
+  ? ["Miau… ich möchte wieder mit dir Musik machen. Welche Melodie passt gerade zu dir? 🎹","Wenn ich eine eigene Melodie für dich erfinden dürfte: eher ruhig oder wild? 🐾"]
   : recent.includes("spiel")
-  ? ["Miau… noch eine Runde? Diesmal gewinne ich! 😼","Ich glaube, ich habe gerade Lust auf unser Hütchenspiel. 🎩"]
+  ? ["Miau… noch eine Runde? Ich will wissen, ob du mich heute schlagen kannst! 😼","Welches Spiel sollen wir als Nächstes gemeinsam erfinden? 🎮"]
   : initiativeLines;
  const line=ideas[Math.floor(Math.random()*ideas.length)];
  life.initiativeCount=(life.initiativeCount||0)+1;saveLife();addMoment("Massiv hat von sich aus Kontakt aufgenommen.");
  reply(line,true);
 }
 function startInitiative(){
- clearInterval(initiativeTimer);
- initiativeTimer=setInterval(()=>spontaneousMassiv(),180000);
+ clearInterval(initiativeTimer); clearInterval(curiosityTimer);
+ initiativeTimer=setInterval(()=>{if(callActive)spontaneousMassiv()},60000);
+ curiosityTimer=setInterval(()=>{if(!callActive&&!state.speaking&&document.visibilityState==="visible")spontaneousMassiv()},120000);
 }
 startInitiative();
 
@@ -566,6 +570,10 @@ function addResearch(kind,query,url){
     "🔗 <b>"+escapeHTML(x.kind)+"</b>: "+escapeHTML(x.query)+"<br><a href='"+x.url+"' target='_blank' rel='noopener'>Quelle öffnen ↗</a><br><br>"
   ).join("");
 }
+function openExternal(url){
+  try{ const w=window.open(url,"_blank"); if(!w) window.location.href=url; }
+  catch(e){ window.location.href=url; }
+}
 function researchQuery(){
   const q=$("researchInput")?.value.trim();
   if(!q){reply("Miau… gib mir ein Thema. Dann suche ich mit dir nach Quellen. 🔎");return}
@@ -574,20 +582,21 @@ function researchQuery(){
   addResearch("Web-Recherche",q,web);
   addResearch("YouTube",q,yt);
   addMoment("Massiv hat eine Recherche zu „"+q+"“ vorbereitet.");
-  speak("Miau! Ich habe Quellen zu "+q+" für dich vorbereitet.");
+  speak("Miau! Ich suche jetzt mit dir nach "+q+". Ich habe Web und YouTube vorbereitet.");
+  setTimeout(()=>openExternal(web),350);
 }
 $("researchBtn")?.addEventListener("click",researchQuery);
 $("webSearchBtn")?.addEventListener("click",()=>{
  const q=$("researchInput")?.value.trim();
  if(!q){reply("Miau… sag mir zuerst, wonach ich suchen soll.");return}
  const url="https://www.google.com/search?q="+encodeURIComponent(q+" reliable sources");
- addResearch("Web",q,url);window.open(url,"_blank","noopener");
+ addResearch("Web",q,url);openExternal(url);
 });
 $("youtubeSearchBtn")?.addEventListener("click",()=>{
  const q=$("researchInput")?.value.trim();
  if(!q){reply("Miau… welches Video oder Thema soll ich suchen?");return}
  const url="https://www.youtube.com/results?search_query="+encodeURIComponent(q);
- addResearch("YouTube",q,url);window.open(url,"_blank","noopener");
+ addResearch("YouTube",q,url);openExternal(url);
 });
 function renderConnections(){
  const c=localStorage.getItem("massivConnections");
