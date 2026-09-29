@@ -138,7 +138,9 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
   <div class="feature"><div class="small">Gemeinsame Momente</div><strong id="momentValue">0</strong></div>
  </div>
  <div id="timeline" class="small" style="text-align:left;margin-top:10px"></div>
-</div>\n\n<div class="card">
+</div>
+
+<div class="card">
  <b>🎮 Massivs Spielesammlung</b>
  <div class="small" style="margin-top:6px">Unsere Spiele bleiben hier gesammelt. Massiv merkt sich, dass wir sie zusammen gespielt haben.</div>
  <div class="game-grid">
@@ -152,7 +154,9 @@ input[type=range]{accent-color:#a16bd1}.small{font-size:12px;color:#aaa1ae;text-
   <div class="small" id="selectedGameDesc"></div>
   <div class="game-board" id="gameBoard"></div>
  </div>
-</div>\n\n
+</div>
+
+
 <div class="card" id="internetCard">
  <b>🌐 Massivs Internet-Welt & Quellen</b>
  <div class="small" style="margin-top:6px">Massiv kann öffentliche Informationen recherchieren und Quellen sammeln. Für private YouTube-/Google-Daten wird eine ausdrückliche OAuth-Freigabe benötigt. Konten werden nur nach deiner ausdrücklichen Verbindung genutzt.</div>
@@ -423,7 +427,8 @@ function startInitiative(){
  initiativeTimer=setInterval(()=>spontaneousMassiv(),180000);
 }
 startInitiative();
-\nfunction finishSession(){
+
+function finishSession(){
  if(sessionStartedAt){life.totalChatMs+=(Date.now()-sessionStartedAt);sessionStartedAt=0;saveLife();renderLife();}
 }
 window.addEventListener("pagehide",finishSession);
